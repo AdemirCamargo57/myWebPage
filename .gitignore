@@ -1,0 +1,10 @@
+working/
+_site/
+.bundle/
+.sass-cache/
+.jekyll-cache/
+vendor/
+tools/pandoc.exe
+tools/rubyinstaller*/
+output/
+Currículo Lattes.pdf

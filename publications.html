@@ -1,0 +1,29 @@
+---
+title: Publications
+permalink: /publications/
+---
+<div class="page-heading"><span class="eyebrow">Scientific work</span><h1>Publications</h1><p class="deck">Research in theoretical chemistry, molecular modeling, and molecular dynamics.</p><p class="meta">Records from <a href="https://orcid.org/0000-0001-9016-222X">ORCID</a>, supplemented by the supplied Lattes curriculum. <a href="{{ '/assets/publications.bib' | relative_url }}" download>Download bibliography (BibTeX)</a>.</p></div>
+{% assign publications = site.data.publications | sort: 'date' | reverse %}
+{% assign years = publications | group_by: 'year' %}
+<div class="filter-bar" role="search" aria-label="Filter publications">
+  <label>Search titles, authors, or journals<input id="publication-search" type="search" placeholder="e.g., solvation, chalcone, Camargo" autocomplete="off"></label>
+  <label>Year<select id="publication-year"><option value="">All years</option>{% for year in years %}<option value="{{ year.name }}">{{ year.name }}</option>{% endfor %}</select></label>
+  <label>Publication type<select id="publication-type"><option value="">All types</option><option value="journal-article">Journal articles</option><option value="preprint">Preprints</option><option value="conference-paper">Conference papers</option></select></label>
+</div>
+<p class="publication-count" data-publication-count aria-live="polite">{{ publications.size }} records</p>
+<nav class="year-links" aria-label="Jump to publication year">{% for year in years %}<a href="#year-{{ year.name }}">{{ year.name }}</a>{% endfor %}</nav>
+<p data-no-results hidden>No publications match these filters. Try a different search or choose all years.</p>
+<div class="page-body">
+{% for year in years %}
+<section data-publication-year><h2 class="year-heading" id="year-{{ year.name }}">{{ year.name }}</h2>
+{% for pub in year.items %}
+<article class="publication" data-publication data-year="{{ pub.year }}" data-type="{{ pub.type }}">
+  <h3>{% if pub.url != '' %}<a href="{{ pub.url | escape }}">{{ pub.title | escape }}</a>{% else %}{{ pub.title | escape }}{% endif %}</h3>
+  {% if pub.authors != '' %}<p class="authors">{{ pub.authors | escape }}</p>{% endif %}
+  <p class="journal">{% if pub.journal != '' %}<em>{{ pub.journal | escape }}</em> · {% endif %}{{ pub.year }}</p>
+  <div class="pub-links"><span class="tag">{{ pub.type | replace: '-', ' ' | capitalize }}</span>{% if pub.doi != '' %}<a href="https://doi.org/{{ pub.doi | escape }}">DOI: {{ pub.doi | escape }}</a>{% endif %}<a href="{{ pub.bib_path | relative_url }}" download>BibTeX</a></div>
+</article>
+{% endfor %}
+</section>
+{% endfor %}
+</div>

@@ -1,0 +1,733 @@
+---
+title: "Natural Transition Orbitals"
+subject: Quantum chemistry
+order: 60
+description: "Constructing the transition matrix and using singular value decomposition to interpret electronic excitations."
+source: CAP-VI_v2.docx
+---
+<p>This section explains how excitation amplitudes form a transition matrix and how its singular value decomposition yields natural transition orbitals. The same transition information is retained, while a small number of hole–electron pairs may provide a compact interpretation.</p>
+
+<h2 id="central-idea">Central Idea</h2>
+
+<p>In an electronic excitation, the transition matrix <span class="math inline">\(\mathbf{T}\)</span> organizes, in a single array, the amplitudes connecting occupied orbitals to virtual orbitals. The index <span class="math inline">\(i\)</span> labels an occupied orbital, and the index <span class="math inline">\(a\)</span> labels a virtual (unoccupied) orbital. Each matrix element answers the question: What is the amplitude of the excitation from the occupied orbital <span class="math inline">\(i\)</span> to virtual orbital <span class="math inline">\(a\)</span>?</p>
+
+<p><span class="math display">\[T_{ia} = \ amplitude\ of\ excitation\ i \rightarrow a.\]</span></p>
+
+<p>By convention, rows represent occupied orbitals and columns represent virtual orbitals. Thus, if there are <span class="math inline">\(n\)</span> relevant occupied orbitals and <span class="math inline">\(m\)</span> relevant virtual orbitals, <span class="math inline">\(\mathbf{T}\)</span> has dimensions <span class="math inline">\(n \times m\)</span>.</p>
+
+<p>Throughout, orbital bases are assumed orthonormal. The finite dimensions count the orbitals actually retained, not necessarily every orbital in a calculation. A matrix entry is generally a dimensionless, potentially complex amplitude. The arrow indicates the physical excitation assignment, not yet the direction in which a one-electron matrix acts on a vector.</p>
+
+<p>In a description based on spin orbitals, a single excitation <span class="math inline">\(i \rightarrow a\)</span> can be represented by an excited Slater determinant obtained by replacing occupied spin orbital <span class="math inline">\(i\)</span> with virtual spin orbital <span class="math inline">\(a\)</span> in the reference determinant. A Slater determinant is an antisymmetric many-electron wave function constructed from spin orbitals, each of which includes a spatial part and a spin part.</p>
+
+<p><span class="math display">\[\Phi_{i}^{a} = {\hat{a}}_{a}^{\dagger}{\hat{a}}_{i}\Phi_{0} \bullet\]</span></p>
+
+<p>Here, <span class="math inline">\(\Phi_{0}\)</span> is the reference determinant. The annihilation operator <span class="math inline">\(â_{i}\)</span> removes an electron from spin orbital <span class="math inline">\(i\)</span>, and the creation operator <span class="math inline">\(â_{a}^{\dagger}\)</span> places an electron in a virtual spin orbital <span class="math inline">\(a\)</span>. The dagger denotes the Hermitian adjoint. Thus, <span class="math inline">\(\Phi_{i}^{a}\)</span> is a singly excited Slater determinant, with its phase fixed by the stated operator ordering. There is, however, an important distinction. When spatial orbitals and states with well-defined total spin are used, a “configuration” such as HOMO → LUMO may correspond to a spin-adapted combination of two determinants rather than to one determinant. Such a combination is called a configuration state function (CSF). HOMO means highest occupied molecular orbital; LUMO means lowest unoccupied molecular orbital. For a closed-shell singlet reference, with total-spin quantum number <span class="math inline">\(S = 0\)</span> and spin functions <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>, the singlet CSF is</p>
+
+<p><span class="math display">\[{CSF}_{i \rightarrow a}^{S = 0} = \frac{1}{\sqrt{2}}\left( \Phi_{i_{\alpha}}^{a_{\alpha}} + \Phi_{i_{\beta}}^{a_{\beta}} \right)\]</span></p>
+
+<p>For a singlet state, the appropriate combination of the α- and β-excited determinants produces a spin-adapted function. In configuration interaction singles (CIS), the Tamm–Dancoff approximation (TDA), and time-dependent density functional theory (TD-DFT), “configurations <span class="math inline">\(i \rightarrow a\)</span>” are often discussed informally, although the implementation may use spin-adapted combinations. The precise statement is therefore: Each single excitation in a spin-orbital representation corresponds to a Slater determinant; a spin-adapted spatial configuration may correspond to a CSF containing more than one determinant.</p>
+
+<p>The plus sign in the singlet CSF assumes that both excited determinants are defined by the creation-annihilation operator convention shown above. For orthonormal spin orbitals, the two determinants are orthogonal and individually normalized. Writing them as <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, their normalized sum satisfies</p>
+
+<p><span class="math display">\[\langle\frac{A + B}{\sqrt{2}}|\frac{A + B}{\sqrt{2}}\rangle = \frac{1}{2}(\langle A|A\rangle + \langle A|B\rangle + \langle B|A\rangle + \langle B|B\rangle) = 1\]</span></p>
+
+<p>For HOMO → LUMO, this CSF combines the α-spin promotion and the β-spin promotion with equal coefficients <span class="math inline">\(1/\sqrt{2}\)</span>. Reordering spin orbitals inside a determinant can change its written sign; a spin-adapted combination must use a consistent determinant-phase convention.</p>
+
+<h2 id="constructing-the-t-matrix">3. Constructing the T Matrix</h2>
+
+<p>Consider two relevant occupied orbitals, HOMO−1 and HOMO, and two virtual orbitals, LUMO and LUMO+1. Here, HOMO−1 is the occupied orbital immediately below the HOMO, and LUMO+1 is the virtual orbital immediately above the LUMO in the chosen orbital-energy ordering. Let <span class="math inline">\(H\)</span> and <span class="math inline">\(L\)</span> abbreviate HOMO and LUMO in determinant labels. Suppose the excited state is represented schematically by the following expansion, denoted <span class="math inline">\(\Psi^{*}\)</span>. In this state label only, the superscript asterisk denotes an excited state, not complex conjugation.</p>
+
+<p><span class="math display">\[\Psi^{*} = - 0.40\,\Phi_{H - 1}^{L} + 0.20\,\Phi_{H - 1}^{L + 1} + 0.60\,\Phi_{H}^{L} + 0.30\,\Phi_{H}^{L + 1}\]</span></p>
+
+<p>Place the amplitudes in <span class="math inline">\(\mathbf{T}\)</span>, retaining their signs (relative phases). Do not square the coefficients.</p>
+
+<table>
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">occupied / virtual</th>
+<th style="text-align: center;">LUMO</th>
+<th style="text-align: center;">LUMO+1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">HOMO−1</td>
+<td style="text-align: center;">−0.40</td>
+<td style="text-align: center;">0.20</td>
+</tr>
+<tr>
+<td style="text-align: center;">HOMO</td>
+<td style="text-align: center;">0.60</td>
+<td style="text-align: center;">0.30</td>
+</tr>
+</tbody>
+</table>
+
+<p><span class="math display">\[\mathbf{T} = \begin{pmatrix}
+ - 0.40 &amp; 0.20 \\
+0.60 &amp; 0.30
+\end{pmatrix}\]</span></p>
+
+<p>For example, if a program output lists 44 → 46 = −0.400, 44 → 47 = 0.200, 45 → 46 = 0.600, and 45 → 47 = 0.30, identify 44 = HOMO−1, 45 = HOMO, 46 = LUMO, and 47 = LUMO+1, and fill the corresponding matrix entries.</p>
+
+<p>The four displayed coefficients are retained exactly. For orthonormal excited determinants, their squared norm is <span class="math inline">\(0.40^{2} + 0.20^{2} + 0.60^{2} + 0.30^{2} = 0.65\)</span>, not 1. Thus, the displayed state is a schematic, unnormalized expansion or a retained part of a larger expansion. If these are the complete coefficients of a state, divide each by <span class="math inline">\(\sqrt{0.65}\)</span> to normalize it. This common scaling changes the singular values but not the NTO directions.</p>
+
+<h2 id="a-second-example">4. A Second Example</h2>
+
+<p>Now consider three relevant occupied orbitals, HOMO−2, HOMO−1, and HOMO, and three virtual orbitals, LUMO, LUMO+1, and LUMO+2. The offsets −2 and +2 indicate two positions below the HOMO and above the LUMO, respectively. Suppose the excitation amplitudes are as follows:</p>
+
+<p>HOMO−2 → LUMO: 0.10</p>
+
+<p>HOMO−2 → LUMO+1: −0.20</p>
+
+<p>HOMO−2 → LUMO+2: 0.05</p>
+
+<p>HOMO−1 → LUMO: 0.35</p>
+
+<p>HOMO−1 → LUMO+1: 0.40</p>
+
+<p>HOMO−1 → LUMO+2: −0.15</p>
+
+<p>HOMO → LUMO: 0.55</p>
+
+<p>HOMO → LUMO+1: −0.25</p>
+
+<p>HOMO → LUMO+2: 0.30</p>
+
+<p>The excited state can be written schematically as</p>
+
+<p><span class="math display">\[\Psi^{*} = 0.10\Phi_{H - 2}^{L} - 0.20\Phi_{H - 2}^{L + 1} + 0.05\Phi_{H - 2}^{L + 2} + 0.35\Phi_{H - 1}^{L} + 0.40\Phi_{H - 1}^{L + 1} - 0.15\Phi_{H - 1}^{L + 2} + 0.55\Phi_{H}^{L} - 0.25\Phi_{H}^{L + 1} + 0.30\Phi_{H}^{L + 2}\]</span></p>
+
+<p>The rows follow the selected order of occupied orbitals, and the columns follow the selected order of virtual orbitals:</p>
+
+<table>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">occupied / virtual</th>
+<th style="text-align: center;">LUMO</th>
+<th style="text-align: center;">LUMO+1</th>
+<th style="text-align: center;">LUMO+2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">HOMO−2</td>
+<td style="text-align: center;">0.10</td>
+<td style="text-align: center;">−0.20</td>
+<td style="text-align: center;">0.05</td>
+</tr>
+<tr>
+<td style="text-align: center;">HOMO−1</td>
+<td style="text-align: center;">0.35</td>
+<td style="text-align: center;">0.40</td>
+<td style="text-align: center;">−0.15</td>
+</tr>
+<tr>
+<td style="text-align: center;">HOMO</td>
+<td style="text-align: center;">0.55</td>
+<td style="text-align: center;">−0.25</td>
+<td style="text-align: center;">0.30</td>
+</tr>
+</tbody>
+</table>
+
+<p><span class="math display">\[\mathbf{T} = \begin{pmatrix}
+0.10 &amp; - 0.20 &amp; 0.05 \\
+0.35 &amp; 0.40 &amp; - 0.15 \\
+0.55 &amp; - 0.25 &amp; 0.30
+\end{pmatrix}\]</span></p>
+
+<p>For example, the entry in row 2, column 3 is <span class="math inline">\(T_{23} = - 0.15\)</span>, because it represents the amplitude for HOMO−1 → LUMO+2. The entry in row 3, column 1 is <span class="math inline">\(T_{31} = 0.55\)</span>, because it represents HOMO → LUMO.</p>
+
+<p>The nine entries have a squared norm <span class="math inline">\(0.8125\)</span>. If the expansion is complete and the configurations are orthonormal, normalization requires division by <span class="math inline">\(\sqrt{0.8125}\)</span>. If it is a selected block from a larger calculation, keep its actual amplitudes when representing that block. Never renormalize an incomplete block without stating that choice.</p>
+
+<h2 id="what-happens-when-an-excitation-is-not-listed">5. What Happens When an Excitation Is Not Listed?</h2>
+
+<p>If a particular excitation <span class="math inline">\(i \rightarrow a\)</span> makes no significant contribution, its matrix entry may be treated as approximately zero:</p>
+
+<p><span class="math display">\[T_{ia} \approx 0.\]</span></p>
+
+<p>Thus, a <span class="math inline">\(\mathbf{T}\)</span> matrix may contain many zeros or very small entries. In actual calculations, programs often print only amplitudes above a threshold; omitted terms are not necessarily exactly zero. If a program prints only entries with <span class="math inline">\(|T_{ia}| \geq 0.05\)</span>, an unprinted amplitude of 0.03 may be approximated by zero, but it is not known to vanish. Its omission contributes <span class="math inline">\(0.03^{2} = 0.0009\)</span> to the sum of squared absolute errors in all matrix entries.</p>
+
+<p>The matrix <span class="math inline">\(\mathbf{T}\)</span> contains amplitudes, not probabilities. The relative signs of the coefficients affect the linear combinations that form the NTOs. Let <span class="math inline">\(X_{ia}\)</span> denote an excitation amplitude in the example model or TDA convention under consideration. Then</p>
+
+<p><span class="math display">\[T_{ia} = X_{ia}\ \ (example\ model/TDA),\ \ \ \ T_{ia} \neq |X_{ia}|^{2}.\]</span></p>
+
+<p>Squared magnitudes may subsequently enter weights or contributions, but they must not replace amplitudes when assembling the transition matrix.</p>
+
+<p>Consider the real matrix <span class="math inline">\(\mathbf{A}\)</span> below, used only to illustrate phase information. Its two rows are orthogonal, so both singular values are equal 1. Squaring its entries gives a different matrix <span class="math inline">\(\mathbf{B}\)</span>, which has rank one and singular values 1 and 0. Here, rank is the number of linearly independent columns.</p>
+
+<p><span class="math display">\[\mathbf{A} = \frac{1}{\sqrt{2}}\begin{bmatrix}
+1 &amp; 1 \\
+1 &amp; - 1
+\end{bmatrix},\ \ \ \ \mathbf{A}\mathbf{A}^{\mathbf{\dagger}} = \begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{bmatrix},\ \ \ \ \mathbf{B} = \frac{1}{2}\begin{bmatrix}
+1 &amp; 1 \\
+1 &amp; 1
+\end{bmatrix}\]</span></p>
+
+<p>Thus, squaring the amplitudes changes both the rank and the NTO structure. For a complex coefficient, a weight uses <span class="math inline">\(|X_{ia}|^{2} = X_{ia}^{*}X_{ia}\)</span>, not the generally complex quantity <span class="math inline">\(X_{ia}^{2}\)</span>.</p>
+
+<h2 id="from-the-t-matrix-to-ntos-svd">From the T Matrix to NTOs: SVD</h2>
+
+<p>After constructing <span class="math inline">\(\mathbf{T}\)</span>, apply the <strong>singular value decomposition</strong> (SVD). In the full SVD, <span class="math inline">\(\mathbf{U}\)</span> is an <span class="math inline">\(n \times n\)</span> unitary matrix, <span class="math inline">\(\mathbf{V}\)</span> is an <span class="math inline">\(m \times m\)</span> unitary matrix, and <span class="math inline">\(\mathbf{\Lambda}\)</span> is an <span class="math inline">\(n \times m\)</span> rectangular diagonal matrix whose diagonal entries are nonnegative singular values. The dagger denotes conjugate transpose, so <span class="math inline">\(\mathbf{V}^{\mathbf{\dagger}}\mathbf{= (}\mathbf{V}^{\mathbf{*}}\mathbf{)}^{\mathbf{T}}\)</span>, where the asterisk means entrywise complex conjugation and the superscript <span class="math inline">\(T\)</span> means transpose. For real matrices, unitary matrices are orthogonal, and the dagger reduces to the transpose.</p>
+
+<p><span class="math display">\[\mathbf{T} = \mathbf{U\Lambda}\mathbf{V}^{\mathbf{\dagger}}\]</span></p>
+
+<p>The matrix <span class="math inline">\(\mathbf{U}\)</span> provides linear combinations of occupied orbitals, while <span class="math inline">\(\mathbf{V}\)</span> provides linear combinations of virtual orbitals. The singular values occupy the diagonal of <span class="math inline">\(\mathbf{\Lambda}\)</span>.</p>
+
+<p>Notation: Let <span class="math inline">\(q = min(n,m)\)</span>, and order the singular values as <span class="math inline">\(\lambda_{1} \geq \lambda_{2} \geq \ldots \geq \lambda_{q} \geq 0\)</span>. Let <span class="math inline">\(r_{T}\)</span> denote the rank of <span class="math inline">\(\mathbf{T}\)</span>, the number of nonzero singular values. Sums over transition pairs run from 1 to <span class="math inline">\(q\)</span>, or equivalently over the <span class="math inline">\(r_{T}\)</span> nonzero terms. Unpaired null-space columns of a full rectangular SVD carry no transition amplitude. A reduced SVD retains only the needed columns.</p>
+
+<p>Let <span class="math inline">\(\phi_{i}^{occ}\)</span> and <span class="math inline">\(\phi_{a}^{virt}\)</span> denote the original orthonormal occupied and virtual molecular orbitals; the superscripts “occ” and “virt” are labels, not powers. The index <span class="math inline">\(k\)</span> labels an NTO pair, and the superscripts <span class="math inline">\(h\)</span> and <span class="math inline">\(e\)</span> denote its hole and electron members. The matrix elements <span class="math inline">\(U_{ik}\)</span> and <span class="math inline">\(V_{ak}\)</span> are their expansion coefficients. The defining equations are</p>
+
+<p><span class="math display">\[\psi_{k}^{h} = \sum_{i}^{}U_{ik}\phi_{i}^{occ}\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[\psi_{k}^{e} = \sum_{a}^{}V_{ak}\phi_{a}^{virt}.\]</span></p>
+
+<p>In the first equation, <span class="math inline">\(\psi_{k}^{h}\)</span> is the kth hole NTO. It describes the orbital character associated with removing electronic amplitude during the excitation. The index <span class="math inline">\(k\)</span> identifies the NTO pair: <span class="math inline">\(k = 1\)</span> for the first pair, <span class="math inline">\(k = 2\)</span> for the second pair, and so on. The occupied-orbital index <span class="math inline">\(i\)</span> runs over all <span class="math inline">\(N_{occ} = n\)</span> occupied orbitals retained in the matrix:</p>
+
+<p><span class="math display">\[i = 1,2,3,\ldots,N_{occ}.\]</span></p>
+
+<p>The term</p>
+
+<p><span class="math display">\[\phi_{i}^{occ}\]</span></p>
+
+<p>is the ith original occupied molecular orbital, for example,</p>
+
+<p><span class="math display">\[HOMO,\quad HOMO - 1,\quad HOMO - 2,\ldots\]</span></p>
+
+<p>The coefficient <span class="math inline">\(U_{ik}\)</span> specifies the contribution of the occupied orbital <span class="math inline">\(i\)</span> to hole NTO <span class="math inline">\(k\)</span>. For example, the source illustrates the following linear combination:</p>
+
+<p><span class="math display">\[\psi_{1}^{h} = 0.80\,\phi_{HOMO} + 0.50\,\phi_{HOMO - 1} - 0.20\,\phi_{HOMO - 2} \bullet\]</span></p>
+
+<p>Normalization of illustrative NTO coefficients. The source’s hole coefficients (0.80, 0.50, −0.20) have squared norm 0.93. The expression above is therefore an unnormalized illustrative combination, not yet a normalized NTO. The corresponding normalized hole orbital is</p>
+
+<p><span class="math display">\[\psi_{1}^{h} = \frac{0.80\phi_{HOMO} + 0.50\phi_{HOMO - 1} - 0.20\phi_{HOMO - 2}}{\sqrt{0.93}}\]</span></p>
+
+<p>This expression means that the first hole orbital is a linear combination of those three occupied orbitals; it need not equal the HOMO. The second defining equation,</p>
+
+<p><span class="math display">\[\psi_{k}^{e} = \sum_{a}^{}V_{ak}\phi_{a}^{virt},\]</span></p>
+
+<p>is entirely analogous, but it involves virtual orbitals. Here,</p>
+
+<p><span class="math display">\[\psi_{k}^{e}\]</span></p>
+
+<p>is the kth electron, or particle, NTO. It describes the orbital character associated with adding electronic amplitude during the excitation. The virtual-orbital index <span class="math inline">\(a\)</span> runs over the <span class="math inline">\(N_{virt} = m\)</span> retained virtual orbitals:</p>
+
+<p><span class="math display">\[a = 1,2,3,\ldots,N_{virt} \bullet\]</span></p>
+
+<p>Examples include LUMO, LUMO+1, and LUMO+2. The function <span class="math inline">\(\phi_{a}^{virt}\)</span> is an original virtual orbital, whereas <span class="math inline">\(V_{ak}\)</span> specifies its contribution to electron NTO <span class="math inline">\(k\)</span>. The source gives the illustrative combination</p>
+
+<p><span class="math display">\[\psi_{1}^{e} = 0.75\,\phi_{LUMO} - 0.60\,\phi_{LUMO + 1} + 0.15\,\phi_{LUMO + 2}.\]</span></p>
+
+<p>The electron coefficients (0.75, −0.60, 0.15) have squared norm 0.945. Their normalized version is</p>
+
+<p><span class="math display">\[\psi_{1}^{e} = \frac{0.75\phi_{LUMO} - 0.60\phi_{LUMO + 1} + 0.15\phi_{LUMO + 2}}{\sqrt{0.945}} \bullet\]</span></p>
+
+<p>This first electron orbital is also a linear combination of several virtual orbitals. The central point is that <span class="math inline">\(\mathbf{U}\)</span> and <span class="math inline">\(\mathbf{V}\)</span> are obtained from the SVD of the transition matrix:</p>
+
+<p><span class="math display">\[\mathbf{T} = \mathbf{U\Lambda}\mathbf{V}^{\mathbf{\dagger}}.\]</span></p>
+
+<p>The matrix <span class="math inline">\(\mathbf{U}\)</span> supplies the coefficients for combinations of occupied orbitals, and <span class="math inline">\(\mathbf{V}\)</span> supplies those for combinations of virtual orbitals. This can be represented schematically as</p>
+
+<p><span class="math display">\[original\ occupied\ orbitals\  \rightarrow \lbrack U\rbrack\ hole\ NTOs\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[original\ virtual\ orbitals\  \rightarrow \lbrack V\rbrack\ electron\ NTOs\]</span></p>
+
+<p>If there are three occupied orbitals,</p>
+
+<p><span class="math display">\[\phi_{1}^{occ},\quad\phi_{2}^{occ},\quad\phi_{3}^{occ},\]</span></p>
+
+<p>and the first column of <span class="math inline">\(\mathbf{U}\)</span> is illustrated by the coefficient vector</p>
+
+<p><span class="math display">\[\begin{pmatrix}
+0.8 \\
+0.5 \\
+ - 0.2
+\end{pmatrix},\]</span></p>
+
+<p>then the corresponding linear combination is</p>
+
+<p><span class="math display">\[\psi_{1}^{h} = 0.8\phi_{1}^{occ} + 0.5\phi_{2}^{occ} - 0.2\phi_{3}^{occ}.\]</span></p>
+
+<p>Thus, each column of <span class="math inline">\(\mathbf{U}\)</span> generates a hole NTO, and each column of <span class="math inline">\(\mathbf{V}\)</span> generates an electron NTO. The illustrative vector above must be normalized before it can be an actual column of a unitary matrix.</p>
+
+<p><span class="math display">\[u_{1} = \frac{1}{\sqrt{0.93}}\begin{bmatrix}
+0.8 \\
+0.5 \\
+ - 0.2
+\end{bmatrix},\ \ \ \ \mathbf{u}_{1}^{\dagger}\mathbf{u}_{1} = 1.\]</span></p>
+
+<p>An important property follows from the unitarity of <span class="math inline">\(\mathbf{U}\)</span> and <span class="math inline">\(\mathbf{V}\)</span> (orthogonality in the real case): the NTOs remain orthonormal. Here, <span class="math inline">\(l\)</span> is a second NTO index, <span class="math inline">\(\langle f|g\rangle\)</span> is the orbital inner product, and the Kronecker delta <span class="math inline">\(\delta_{kl}\)</span> equals 1 when <span class="math inline">\(k = l\)</span> and 0 otherwise:</p>
+
+<p><span class="math display">\[\left\langle \psi_{k}^{h}|\psi_{l}^{h} \right\rangle = \delta_{kl}\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[\left\langle \psi_{k}^{e}|\psi_{l}^{e} \right\rangle = \delta_{kl}.\]</span></p>
+
+<p>Let <span class="math inline">\(j\)</span> be a second occupied-orbital index. Orthonormality of the original orbitals gives <span class="math inline">\(\langle\phi_{i}^{occ}|\phi_{j}^{occ}\rangle = \delta_{ij}\)</span>. Substitution and contraction of this Kronecker delta give</p>
+
+<p><span class="math display">\[\langle\psi_{k}^{h}|\psi_{l}^{h}\rangle = \sum_{ij}U_{ik}^{*}U_{jl}\langle\phi_{i}^{occ}|\phi_{j}^{occ}\rangle = \sum_{i}\ U_{ik}^{*}U_{il} = (\mathbf{U}^{\mathbf{\dagger}}\mathbf{U})_{kl} = \delta_{kl}\]</span></p>
+
+<p>The virtual-orbital proof is identical: replace <span class="math inline">\(\mathbf{U}\)</span> by <span class="math inline">\(\mathbf{V}\)</span> and the occupied indices by virtual indices. The last equality follows because a unitary matrix has orthonormal columns. A reduced SVD also has orthonormal retained columns. These statements require orthonormal input orbitals; a nonorthogonal atomic-orbital representation requires its overlap metric. Consequently, the transformation introduces no new information. It rotates the original orbital bases to obtain a compact representation of the electronic transition.</p>
+
+<p>To summarize,</p>
+
+<p><span class="math display">\[\psi_{k}^{h} = \ optimized\ linear\ combination\ of\ occupied\ orbitals\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[\psi_{k}^{e} = \ optimized\ linear\ combination\ of\ virtual\ orbitals\]</span></p>
+
+<p>The pair</p>
+
+<p><span class="math display">\[\boxed{\psi_{k}^{h} \rightarrow \psi_{k}^{e}}\]</span></p>
+
+<p>forms the kth principal channel of the electronic transition. Now consider the transition matrix</p>
+
+<p><span class="math display">\[\mathbf{T} = \begin{pmatrix}
+0.6 &amp; 0.3 \\
+ - 0.4 &amp; 0.2
+\end{pmatrix}.\]</span></p>
+
+<p>Its rows correspond to the occupied orbitals <span class="math inline">\(\phi_{1}^{occ}\)</span> and <span class="math inline">\(\phi_{2}^{occ}\)</span>, and its columns correspond to the virtual orbitals <span class="math inline">\(\phi_{1}^{virt}\)</span> and <span class="math inline">\(\phi_{2}^{virt}\)</span>. Its singular value decomposition is</p>
+
+<p><span class="math display">\[\mathbf{T = U\Lambda}\mathbf{V}^{\mathbf{\dagger}}.\]</span></p>
+
+<p><mark>Numerical SVD.</mark> The source proposes <span class="math inline">\(U \approx \begin{bmatrix}
+0.83 &amp; - 0.56 \\
+ - 0.56 &amp; - 0.83
+\end{bmatrix}\)</span> and <span class="math inline">\(V \approx \begin{bmatrix}
+0.98 &amp; - 0.20 \\
+0.20 &amp; 0.98
+\end{bmatrix}\)</span> “for illustration.” Those matrices do not constitute an SVD of the stated <span class="math inline">\(T\)</span> with nonnegative diagonal singular values. To make the example mathematically consistent, use the following computed factors, with entries rounded to six decimal places:</p>
+
+<p><span class="math display">\[U \approx \begin{bmatrix}
+0.886114 &amp; 0.463467 \\
+ - 0.463467 &amp; 0.886114
+\end{bmatrix}\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[V \approx \begin{bmatrix}
+0.972064 &amp; - 0.234715 \\
+0.234715 &amp; 0.972064
+\end{bmatrix}\]</span></p>
+
+<p><span class="math display">\[\Lambda \approx \begin{bmatrix}
+0.737663 &amp; 0 \\
+0 &amp; 0.325352
+\end{bmatrix}\]</span></p>
+
+<p>The corrected matrices above replace the inaccurate factors in all subsequent numerical orbital combinations. Values are rounded only for display. Simultaneously changing the sign of corresponding columns of <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> leaves their outer product unchanged.</p>
+
+<p>The first column of <span class="math inline">\(U\)</span> is</p>
+
+<p><span class="math display">\[\begin{bmatrix}
+0.886114 \\
+ - 0.463467
+\end{bmatrix}\]</span></p>
+
+<p>It supplies the coefficients of the first hole NTO:</p>
+
+<p><span class="math display">\[\psi_{1}^{h} \approx 0.886114\phi_{1}^{occ} - 0.463467\phi_{2}^{occ}\]</span></p>
+
+<p>The second column of <span class="math inline">\(U\)</span> is</p>
+
+<p><span class="math display">\[\begin{bmatrix}
+0.463467 \\
+0.886114
+\end{bmatrix}\]</span></p>
+
+<p>so</p>
+
+<p><span class="math display">\[\psi_{2}^{h} \approx 0.463467\phi_{1}^{occ} + 0.886114\phi_{2}^{occ}\]</span></p>
+
+<p>For the virtual orbitals, the first column of <span class="math inline">\(V\)</span> is</p>
+
+<p><span class="math display">\[\begin{bmatrix}
+0.972064 \\
+0.234715
+\end{bmatrix}\]</span></p>
+
+<p>and therefore</p>
+
+<p><span class="math display">\[\psi_{1}^{e} \approx 0.972064\phi_{1}^{virt} + 0.234715\phi_{2}^{virt}\]</span></p>
+
+<p>The second column of <span class="math inline">\(V\)</span> gives</p>
+
+<p><span class="math display">\[\psi_{2}^{e} \approx - 0.234715\phi_{1}^{virt} + 0.972064\phi_{2}^{virt}\]</span></p>
+
+<p>The reason for using columns becomes explicit in matrix notation. Write the occupied orbitals as a row vector of functions:</p>
+
+<p><span class="math display">\[\mathbf{\phi}^{occ} = \begin{pmatrix}
+\phi_{1}^{occ} &amp; \phi_{2}^{occ}
+\end{pmatrix}.\]</span></p>
+
+<p>Then the hole NTOs are</p>
+
+<p><span class="math display">\[\begin{pmatrix}
+\psi_{1}^{h} &amp; \psi_{2}^{h}
+\end{pmatrix} = \begin{pmatrix}
+\phi_{1}^{occ} &amp; \phi_{2}^{occ}
+\end{pmatrix}\mathbf{U}.\]</span></p>
+
+<p>Substituting the corrected matrix <span class="math inline">\(U\)</span> gives</p>
+
+<p><span class="math display">\[\lbrack\psi_{1}^{h}\ \ \psi_{2}^{h}\rbrack \approx \lbrack\phi_{1}^{occ}\ \ \phi_{2}^{occ}\rbrack\begin{bmatrix}
+0.886114 &amp; 0.463467 \\
+ - 0.463467 &amp; 0.886114
+\end{bmatrix}\]</span></p>
+
+<p>Carrying out the multiplication, the first component is</p>
+
+<p><span class="math display">\[\psi_{1}^{h} \approx 0.886114\phi_{1}^{occ} - 0.463467\phi_{2}^{occ}\]</span></p>
+
+<p>because it uses the first column of <span class="math inline">\(U\)</span>. The second component is</p>
+
+<p><span class="math display">\[\psi_{2}^{h} \approx 0.463467\phi_{1}^{occ} + 0.886114\phi_{2}^{occ}\]</span></p>
+
+<p>because it uses the second column. This is the usual rule for matrix multiplication: each component of the resulting row vector is obtained by combining the original orbital row vector with one column of the transformation matrix. The same reasoning applies to virtual orbitals:</p>
+
+<p><span class="math display">\[\begin{pmatrix}
+\psi_{1}^{e} &amp; \psi_{2}^{e}
+\end{pmatrix} = \begin{pmatrix}
+\phi_{1}^{virt} &amp; \phi_{2}^{virt}
+\end{pmatrix}\mathbf{V}.\]</span></p>
+
+<p>Hence,</p>
+
+<p><span class="math display">\[\psi_{k}^{e} = \sum_{a}^{}V_{ak}\phi_{a}^{virt}.\]</span></p>
+
+<p>The index <span class="math inline">\(k\)</span> appears second in <span class="math inline">\(U_{ik}\)</span> and <span class="math inline">\(V_{ak}\)</span> because it identifies the column. For fixed <span class="math inline">\(k\)</span>, vary <span class="math inline">\(i\)</span> or <span class="math inline">\(a\)</span>:</p>
+
+<p><span class="math display">\[\psi_{k}^{h} = U_{1k}\phi_{1}^{occ} + U_{2k}\phi_{2}^{occ} + \cdots\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[\psi_{k}^{e} = V_{1k}\phi_{1}^{virt} + V_{2k}\phi_{2}^{virt} + \cdots\]</span></p>
+
+<p>Therefore,</p>
+
+<p><span class="math display">\[k = \ column\ index\  = \ NTO\ index\]</span></p>
+
+<p>There is a further interpretation. In the SVD,</p>
+
+<p><span class="math display">\[\mathbf{T = U\Lambda}\mathbf{V}^{\mathbf{\dagger}},\]</span></p>
+
+<p>we may write</p>
+
+<p><span class="math display">\[\mathbf{T} = \lambda_{1}\,\mathbf{u}_{1}\mathbf{v}_{1}^{\dagger} + \lambda_{2}\,\mathbf{u}_{2}\mathbf{v}_{2}^{\dagger} + \cdots\]</span></p>
+
+<p>where <span class="math inline">\(u_{1},u_{2},\ldots\)</span> are the columns of <span class="math inline">\(U\)</span>, and <span class="math inline">\(v_{1},v_{2},\ldots\)</span> are the columns of <span class="math inline">\(V\)</span>. Thus, each term</p>
+
+<p><span class="math display">\[\lambda_{k}\,\mathbf{u}_{k}\mathbf{v}_{k}^{\dagger}\]</span></p>
+
+<p>represents a transition channel</p>
+
+<p><span class="math display">\[\boxed{\psi_{k}^{h} \rightarrow \psi_{k}^{e}}\]</span></p>
+
+<p>whose amplitude is characterized by <span class="math inline">\(\lambda_{k}\)</span>, the kth singular value, and whose weight is often characterized by <span class="math inline">\(\lambda_{k}^{2}\)</span>. Thus, columns are used because the SVD decomposes <span class="math inline">\(T\)</span> into pairs of column vectors:</p>
+
+<p><span class="math display">\[\boxed{T = \sum_{k}^{}\lambda_{k}\mathbf{u}_{k}\mathbf{v}_{k}^{\dagger}}\]</span></p>
+
+<p>These column vectors are precisely the coefficients used to construct the NTOs.</p>
+
+<p>Added clarification — A nonzero outer product multiplied by <span class="math inline">\(\lambda_{k}\)</span> is a rank-one contribution. Its squared Frobenius norm is <span class="math inline">\(\lambda_{k}^{2}\)</span>, because both singular vectors have unit norm. For <span class="math inline">\(T \neq 0\)</span>, define the normalized pair weight <span class="math inline">\(w_{k}\)</span> by</p>
+
+<p><span class="math display">\[w_{k} = \frac{\lambda_{k}^{2}}{\sum_{j}\ \lambda_{j}^{2}},\ \ \ \ \sum_{k}\ w_{k} = 1,\ \ \ \ \| T\|_{F}^{2} = \sum_{ia}|T_{ia}|^{2} = \sum_{k}\ \lambda_{k}^{2}\]</span></p>
+
+<p>Here, <span class="math inline">\(j\)</span> is a dummy pair index, and <span class="math inline">\(\| T\|_{F}\)</span> is the Frobenius norm. The normalized weights measure the share of the matrix norm carried by each pair; they are not automatically literal probabilities of electron motion. If <span class="math inline">\(T = 0\)</span>, normalized weights are undefined and no nonzero transition channel exists.</p>
+
+<p>The source next proposes a complete derivation. Here, a ket <span class="math inline">\(|f\rangle\)</span> denotes an orbital vector, a bra <span class="math inline">\(\langle f|\)</span> its Hermitian adjoint, and <span class="math inline">\(\hat{T}\)</span> the one-electron operator associated with <span class="math inline">\(T\)</span>. The derivation starts from the matrix entries</p>
+
+<p><span class="math display">\[T_{ia}\]</span></p>
+
+<p>and arriving at the NTO operator representation</p>
+
+<p><span class="math display">\[\hat{T} = \sum_{k}\ \lambda_{k}|\psi_{k}^{h}\rangle\langle\psi_{k}^{e}|\]</span></p>
+
+<p>This derivation explains why hole–electron pairs arise. Proceeding carefully makes the construction of NTOs mathematically transparent. Begin with the transition matrix <span class="math inline">\(T\)</span>, whose entries are</p>
+
+<p><span class="math display">\[T_{ia},\]</span></p>
+
+<p>where <span class="math inline">\(i\)</span> runs over occupied orbitals and <span class="math inline">\(a\)</span> runs over virtual orbitals. We may formally define the associated one-electron operator as</p>
+
+<p>Operator notation and direction — A ket <span class="math inline">\(|f\rangle\)</span> represents an orbital vector, and its bra <span class="math inline">\(\langle f|\)</span> is its Hermitian adjoint. An outer product <span class="math inline">\(|f\rangle\langle g|\)</span> maps <span class="math inline">\(|g\rangle\)</span> into <span class="math inline">\(|f\rangle\)</span> when <span class="math inline">\(g\)</span> is normalized. We write <span class="math inline">\(\hat{T}\)</span> for the one-electron operator associated with the matrix <span class="math inline">\(T\)</span>, distinguishing it from the matrix itself. The following occupied-row, virtual-column operator maps the virtual space into the occupied space. Its adjoint maps occupied into virtual space. Neither should be confused with the many-electron excitation operator <span class="math inline">\(â_{a}^{\dagger}â_{i}\)</span>.</p>
+
+<p><span class="math display">\[\hat{T} = \sum_{ia}^{}T_{ia}\,\left| \phi_{i}^{occ}\rangle\langle\phi_{a}^{virt} \right|.\]</span></p>
+
+<p>Each entry <span class="math inline">\(T_{ia}\)</span> associates occupied orbital <span class="math inline">\(i\)</span> with virtual orbital <span class="math inline">\(a\)</span>. Applying the SVD gives</p>
+
+<p><span class="math display">\[\boxed{\mathbf{T = U\Lambda}\mathbf{V}^{\mathbf{\dagger}}}\]</span></p>
+
+<p>where the rectangular diagonal matrix has the form</p>
+
+<p><span class="math display">\[\Lambda = \begin{pmatrix}
+\lambda_{1} &amp; 0 &amp; \cdots \\
+0 &amp; \lambda_{2} &amp; \cdots \\
+ \vdots &amp; \vdots &amp; \ddots 
+\end{pmatrix}.\]</span></p>
+
+<p>In terms of matrix elements,</p>
+
+<p><span class="math display">\[T_{ia} = \sum_{k}^{}U_{ik}\lambda_{k}V_{ak}^{*}.\]</span></p>
+
+<p>This step is fundamental: the collection of amplitudes <span class="math inline">\(T_{ia}\)</span> is rewritten as a sum of contributions indexed by <span class="math inline">\(k\)</span>. Substitute this identity into the operator expression:</p>
+
+<p><span class="math display">\[\hat{T} = \sum_{ia}^{}\left( \sum_{k}^{}U_{ik}\lambda_{k}V_{ak}^{*} \right)\left| \phi_{i}^{occ}\rangle\langle\phi_{a}^{virt} \right|.\]</span></p>
+
+<p>Because the orbital basis is finite, the sums can be reordered without convergence issues:</p>
+
+<p><span class="math display">\[\hat{T} = \sum_{k}^{}\lambda_{k}\sum_{ia}^{}U_{ik}V_{ak}^{*}\left| \phi_{i}^{occ}\rangle\langle\phi_{a}^{virt} \right|.\]</span></p>
+
+<p>Distribute the products and separate the sum over <span class="math inline">\(i\)</span> from the sum over <span class="math inline">\(a\)</span>:</p>
+
+<p><span class="math display">\[\hat{T} = \sum_{k}^{}\lambda_{k}\left( \sum_{i}^{}U_{ik}|\phi_{i}^{occ}\rangle \right)\left( \sum_{a}^{}V_{ak}^{*}\langle\phi_{a}^{virt}| \right).\]</span></p>
+
+<p>Two linear combinations now emerge naturally.</p>
+
+<p>Define</p>
+
+<p><span class="math display">\[|\psi_{k}^{h}\rangle = \sum_{i}\ U_{ik}|\phi_{i}^{occ}\rangle\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[|\psi_{k}^{e}\rangle = \sum_{a}\ V_{ak}|\phi_{a}^{virt}\rangle\]</span></p>
+
+<p>Taking the Hermitian adjoint conjugates the coefficients, so</p>
+
+<p><span class="math display">\[\langle\psi_{k}^{e}| = \sum_{a}\ V_{ak}^{*}\langle\phi_{a}^{virt}|\]</span></p>
+
+<p>Substituting these definitions gives</p>
+
+<p><span class="math display">\[\hat{T} = \sum_{k}\ \lambda_{k}|\psi_{k}^{h}\rangle\langle\psi_{k}^{e}|\]</span></p>
+
+<p>Indeed, applying the operator to an electron NTO makes the pairing explicit: orthonormality gives</p>
+
+<p><span class="math display">\[\hat{T}|\psi_{l}^{e}\rangle = \sum_{k}\ \lambda_{k}|\psi_{k}^{h}\rangle\langle\psi_{k}^{e}|\psi_{l}^{e}\rangle = \lambda_{l}|\psi_{l}^{h}\rangle\]</span></p>
+
+<p><span class="math display">\[{\hat{T}}^{\dagger}|\psi_{l}^{h}\rangle = \lambda_{l}|\psi_{l}^{e}\rangle\]</span></p>
+
+<p>This is the NTO representation of the transition operator. It decomposes the entire transition into orthogonal orbital pairs:</p>
+
+<p><span class="math display">\[\psi_{1}^{h} \leftrightarrow \psi_{1}^{e},\]</span></p>
+
+<p><span class="math display">\[\psi_{2}^{h} \leftrightarrow \psi_{2}^{e},\]</span></p>
+
+<p><span class="math display">\[\psi_{3}^{h} \leftrightarrow \psi_{3}^{e}.\]</span></p>
+
+<p>and so on. The coefficient <span class="math inline">\(\lambda_{k}\)</span> measures the amplitude associated with pair <span class="math inline">\(k\)</span>. If</p>
+
+<p><span class="math display">\[\lambda_{1} \gg \lambda_{2},\lambda_{3},\ldots,\]</span></p>
+
+<p>then the first pair describes nearly the entire transition:</p>
+
+<p><span class="math display">\[\boxed{\psi_{1}^{h} \rightarrow \psi_{1}^{e}.}\]</span></p>
+
+<p>Added quantitative criterion — “Nearly the entire transition” means that the normalized leading weight is close to 1. Let <span class="math inline">\(T^{(p)}\)</span> retain the first <span class="math inline">\(p\)</span> singular terms, with <span class="math inline">\(1 \leq p \leq r_{T}\)</span>. Orthogonality of the outer products gives</p>
+
+<p><span class="math display">\[T^{(p)} = \sum_{k = 1}^{p}\lambda_{k}\ u_{k}\ v_{k}^{\dagger},\ \ \ \ \| T - T^{(p)}\|_{F}^{2} = \sum_{k = p + 1}^{q}\lambda_{k}^{2}\]</span></p>
+
+<p>This truncated SVD minimizes the Frobenius error among matrices of rank at most <span class="math inline">\(p\)</span>. For example, singular values 0.90 and 0.10 give a leading weight of <span class="math inline">\(0.81/0.82 \approx 98.78\%\)</span>, with squared residual 0.01 after retaining one pair. Retaining every nonzero pair is exact; truncation is an approximation.</p>
+
+<p>This is why NTO representations can be compact. The same decomposition is apparent directly in matrix form. Since</p>
+
+<p><span class="math display">\[\mathbf{T = U\Lambda}\mathbf{V}^{\mathbf{\dagger}},\]</span></p>
+
+<p>expansion in columns gives</p>
+
+<p><span class="math display">\[\boxed{T = \lambda_{1}\mathbf{u}_{1}\mathbf{v}_{1}^{\dagger} + \lambda_{2}\mathbf{u}_{2}\mathbf{v}_{2}^{\dagger} + \cdots}\]</span></p>
+
+<p>where</p>
+
+<p><span class="math display">\[\mathbf{u}_{k}\]</span></p>
+
+<p>is the kth column of <span class="math inline">\(U\)</span>, and</p>
+
+<p><span class="math display">\[\mathbf{v}_{k}\]</span></p>
+
+<p>is the kth column of <span class="math inline">\(V\)</span>. Each outer product</p>
+
+<p><span class="math display">\[\mathbf{u}_{k}\mathbf{v}_{k}^{\dagger}\]</span></p>
+
+<p>is a rank-one matrix: its columns are all proportional to the nonzero vector <span class="math inline">\(u_{k}\)</span>, and its image is one-dimensional. Thus, the SVD expresses the following statement:</p>
+
+<p><span class="math display">\[transition\ matrix\  = \ sum\ of\ rank - one\ transition\ contributions\]</span></p>
+
+<p>Each such rank-one contribution corresponds to an NTO pair. There is also an interpretation in terms of transition density. Let <span class="math inline">\(r\)</span> denote the three-dimensional position vector, and let the superscript “tr” label transition density. With the operator convention used here, the transition density is the diagonal of its position-space kernel:</p>
+
+<p>Correction 3 — Complex conjugation. The source omits the conjugate of the virtual orbital in the initial and intermediate transition-density expressions but includes it in the final NTO expression. The corrected formulas below are consistent for complex orbitals. The real-orbital form is unchanged. The variable <span class="math inline">\(r\)</span> is shown as a position argument; a second position <span class="math inline">\(r'\)</span> would give the full kernel <span class="math inline">\(\langle r|\hat{T}|r'\rangle\)</span>, and setting <span class="math inline">\(r' = r\)</span> gives its diagonal.</p>
+
+<p><span class="math display">\[\rho^{tr}(r) = \sum_{ia}T_{ia}\phi_{i}^{occ}(r)\lbrack\phi_{a}^{virt}(r)\rbrack^{*}\]</span></p>
+
+<p>Substituting the matrix-element form of the SVD,</p>
+
+<p><span class="math display">\[T_{ia} = \sum_{k}^{}U_{ik}\lambda_{k}V_{ak}^{*},\]</span></p>
+
+<p>gives</p>
+
+<p><span class="math display">\[\rho^{tr}(r) = \sum_{iak}U_{ik}\lambda_{k}\ V_{ak}^{*}\phi_{i}^{occ}(r)\lbrack\phi_{a}^{virt}(r)\rbrack^{*}\]</span></p>
+
+<p>Reordering and factoring the finite sums gives</p>
+
+<p><span class="math display">\[\rho^{tr}(r) = \sum_{k}\ \lambda_{k}\lbrack\sum_{i}\ U_{ik}\phi_{i}^{occ}(r)\rbrack\lbrack\sum_{a}\ V_{ak}^{*}\lbrack\phi_{a}^{virt}(r)\rbrack^{*}\rbrack\]</span></p>
+
+<p>Recognizing the NTOs and the complex-conjugated electron NTO yields</p>
+
+<p><span class="math display">\[\boxed{\rho^{tr}\left( \mathbf{r} \right) = \sum_{k}^{}\lambda_{k}\psi_{k}^{h}\left( \mathbf{r} \right)\psi_{k}^{e*}\left( \mathbf{r} \right).}\]</span></p>
+
+<p>If the orbitals and coefficients are real, this becomes</p>
+
+<p><span class="math display">\[\boxed{\rho^{tr}\left( \mathbf{r} \right) = \sum_{k}^{}\lambda_{k}\psi_{k}^{h}\left( \mathbf{r} \right)\psi_{k}^{e}\left( \mathbf{r} \right).}\]</span></p>
+
+<p>This identity shows that NTOs do not change the transition density. They express it in another orbital basis that is often much more compact. In other words,</p>
+
+<p><span class="math display">\[canonical\ orbitals\  \rightarrow \ T\ matrix\  \rightarrow \ SVD\  \rightarrow \ NTO\ pairs\]</span></p>
+
+<p>and</p>
+
+<p><span class="math display">\[\hat{T} = \sum_{k}\ \lambda_{k}|\psi_{k}^{h}\rangle\langle\psi_{k}^{e}|\]</span></p>
+
+<p>summarizes the construction mathematically. Depending on the convention, the literature may reverse the order of the bra and ket, for example,</p>
+
+<p><span class="math display">\[\left| \psi_{k}^{e}\rangle\langle\psi_{k}^{h} \right|.\]</span></p>
+
+<p>This depends on the definition of <span class="math inline">\(T\)</span>—in particular, whether occupied orbitals label rows and virtual orbitals label columns, or vice versa. The physical content is unchanged when the entire convention is transformed consistently. The source proposes a further 2 × 2 numerical derivation, calculating <span class="math inline">\(U\)</span>, <span class="math inline">\(\Lambda\)</span>, and <span class="math inline">\(V\)</span> and reconstructing <span class="math inline">\(T\)</span> term by term. That reconstruction is provided below.</p>
+
+<p>Correction 4 — Operator orientation. Reversing bras and kets means taking the adjoint, so coefficients must also be complex conjugated. A mere unqualified interchange is sufficient only in a real convention. In the convention used above,</p>
+
+<p><span class="math display">\[{\hat{T}}^{\dagger} = \sum_{ia}T_{ia}^{*}|\phi_{a}^{virt}\rangle\langle\phi_{i}^{occ}| = \sum_{k}\ \lambda_{k}|\psi_{k}^{e}\rangle\langle\psi_{k}^{h}|\]</span></p>
+
+<h3 id="added-numerical-reconstruction-of-the-2-2-example">Added numerical reconstruction of the 2 × 2 example</h3>
+
+<p>For the matrix with rows (0.6, 0.3) and (−0.4, 0.2), compute the two products entry by entry. For example, the upper-right entry of <span class="math inline">\(TT^{\dagger}\)</span> is <span class="math inline">\(0.6( - 0.4) + 0.3(0.2) = - 0.18\)</span>. The results are</p>
+
+<p><span class="math display">\[TT^{\dagger} = \begin{bmatrix}
+0.45 &amp; - 0.18 \\
+ - 0.18 &amp; 0.20
+\end{bmatrix},\ \ \ \ T^{\dagger}T = \begin{bmatrix}
+0.52 &amp; 0.10 \\
+0.10 &amp; 0.13
+\end{bmatrix}\]</span></p>
+
+<p>Let <span class="math inline">\(\mu\)</span> denote an eigenvalue of either product and let <span class="math inline">\(I_{2}\)</span> be the 2 × 2 identity matrix. The determinant condition for a nonzero eigenvector is</p>
+
+<p><span class="math display">\[det(TT^{\dagger} - \mu I_{2}) = (0.45 - \mu)(0.20 - \mu) - 0.18^{2} = \mu^{2} - 0.65\mu + 0.0576 = 0\]</span></p>
+
+<p><span class="math display">\[\mu_{1,2} = \frac{0.65 \pm \sqrt{0.1921}}{2} \approx 0.54414607,\ 0.10585393\]</span></p>
+
+<p>Taking the nonnegative square roots gives <span class="math inline">\(\lambda_{1} \approx 0.73766257\)</span> and <span class="math inline">\(\lambda_{2} \approx 0.32535201\)</span>. For the first left eigenvector, write its components as <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. The first row gives <span class="math inline">\((0.45 - \mu_{1})x - 0.18y = 0\)</span>, so <span class="math inline">\(y/x = (0.45 - \mu_{1})/0.18 \approx - 0.52303372\)</span>. Enforcing <span class="math inline">\(x^{2} + y^{2} = 1\)</span> and choosing <span class="math inline">\(x &gt; 0\)</span> gives <span class="math inline">\(u_{1} \approx (0.886114, - 0.463467)^{T}\)</span>. Choose the orthogonal unit vector <span class="math inline">\(u_{2} \approx (0.463467,0.886114)^{T}\)</span>, and obtain the corresponding right vectors from <span class="math inline">\(v_{k} = T^{\dagger}u_{k}/\lambda_{k}\)</span>. This produces the corrected <span class="math inline">\(V\)</span> above.</p>
+
+<p>The two weighted outer products are</p>
+
+<p><span class="math display">\[\lambda_{1}u_{1}v_{1}^{\dagger} \approx \begin{bmatrix}
+0.63539274 &amp; 0.15342237 \\
+ - 0.33233183 &amp; - 0.08024508
+\end{bmatrix}\]</span></p>
+
+<p><span class="math display">\[\lambda_{2}u_{2}v_{2}^{\dagger} \approx \begin{bmatrix}
+ - 0.03539274 &amp; 0.14657763 \\
+ - 0.06766817 &amp; 0.28024508
+\end{bmatrix}\]</span></p>
+
+<p>Adding entries in matching positions reconstructs the matrix: <span class="math inline">\(0.63539274 - 0.03539274 = 0.60\)</span>, <span class="math inline">\(0.15342237 + 0.14657763 = 0.30\)</span>, <span class="math inline">\(- 0.33233183 - 0.06766817 = - 0.40\)</span>, and <span class="math inline">\(- 0.08024508 + 0.28024508 = 0.20\)</span>. The equality is exact before rounding. The squared singular values sum to 0.65, giving normalized pair weights of approximately 83.71% and 16.29%. Thus, this particular example contains a substantial second pair.</p>
+
+<h2 id="equivalent-formulation-by-diagonalization">8. Equivalent Formulation by Diagonalization</h2>
+
+<p>The SVD can also be understood through the square matrices <span class="math inline">\(TT^{\dagger}\)</span> and <span class="math inline">\(T^{\dagger}T\)</span>:</p>
+
+<p><span class="math display">\[\mathbf{T}\mathbf{T}^{\mathbf{\dagger}}u_{k} = \lambda_{k}^{2}\mathbf{u}_{k}\]</span></p>
+
+<p><span class="math display">\[\mathbf{T}^{\mathbf{\dagger}}\mathbf{T}v_{k} = \lambda_{k}^{2}\mathbf{v}_{k}\]</span></p>
+
+<p>The eigenvectors <span class="math inline">\(u_{k}\)</span> generate the hole NTOs, and the eigenvectors <span class="math inline">\(v_{k}\)</span> generate the electron NTOs. Both eigenvalue problems share the same nonzero eigenvalues <span class="math inline">\(\lambda_{k}^{2}\)</span>, naturally establishing the hole–electron pairs.</p>
+
+<p>Added derivation — Substituting <span class="math inline">\(T = U\Lambda V^{\dagger}\)</span> and using <span class="math inline">\(V^{\dagger}V = I_{m}\)</span> and <span class="math inline">\(U^{\dagger}U = I_{n}\)</span>, where <span class="math inline">\(I_{m}\)</span> and <span class="math inline">\(I_{n}\)</span> are identity matrices of the indicated sizes, gives</p>
+
+<p><span class="math display">\[TT^{\dagger} = U\Lambda V^{\dagger}V\Lambda^{\dagger}U^{\dagger} = U(\Lambda\Lambda^{\dagger})U^{\dagger}\]</span></p>
+
+<p><span class="math display">\[T^{\dagger}T = V\Lambda^{\dagger}U^{\dagger}U\Lambda V^{\dagger} = V(\Lambda^{\dagger}\Lambda)V^{\dagger}\]</span></p>
+
+<p>The diagonal entries of <span class="math inline">\(\Lambda\Lambda^{\dagger}\)</span> and <span class="math inline">\(\Lambda^{\dagger}\Lambda\)</span> are squared singular values, with additional zeros when the matrix is rectangular. Multiplication by the kth column gives the two eigenvalue equations above. For each <span class="math inline">\(\lambda_{k} &gt; 0\)</span>, pairing follows from</p>
+
+<p><span class="math display">\[Tv_{k} = \lambda_{k}\ u_{k},\ \ \ \ T^{\dagger}u_{k} = \lambda_{k}\ v_{k},\ \ \ \ v_{k} = \frac{T^{\dagger}u_{k}}{\lambda_{k}}\]</span></p>
+
+<p>For example, the products in the preceding 2 × 2 calculation have eigenvalues 0.54414607 and 0.10585393. Their square roots reproduce its singular values. If several singular values are equal, rotations within the corresponding subspaces are possible; individual pairs are not unique, although the combined contribution is unchanged. Null-space vectors with zero singular value do not define a nonzero transition channel.</p>
+
+<h2 id="relationship-to-the-transition-density">9. Relationship to the Transition Density</h2>
+
+<p>For real orbitals and coefficients, let <span class="math inline">\(\rho_{0I}^{tr}(r)\)</span> denote the transition density between the reference state, labeled 0, and the selected excited state, labeled <span class="math inline">\(I\)</span>. Suppressing the “occ” and “virt” labels on the original orbitals, the expression is</p>
+
+<p><span class="math display">\[\rho_{0I}^{tr}(r) = \sum_{ia}T_{ia}\phi_{i}(r)\phi_{a}(r)\]</span></p>
+
+<p>After the SVD, the same information can be written more compactly:</p>
+
+<p><span class="math display">\[\rho_{0I}^{tr}\left( \mathbf{r} \right) = \sum_{k}^{}\lambda_{k}\psi_{k}^{h}\left( \mathbf{r} \right)\psi_{k}^{e}\left( \mathbf{r} \right)\]</span></p>
+
+<p>This is the essential reason for using NTOs: they reorganize the same electronic transition into hole–electron pairs that often provide a much simpler interpretation than dozens of canonical-orbital excitations.</p>
+
+<p>Added example and interpretation — For a single nonzero entry <span class="math inline">\(T_{ia} = c\)</span>, where <span class="math inline">\(c\)</span> is a real positive amplitude, one NTO pair suffices and <span class="math inline">\(\rho_{0I}^{tr}(r) = c\phi_{i}(r)\phi_{a}(r)\)</span>. The spatial product can change sign and is not a probability density. Its integral is zero when the occupied and virtual orbitals are orthogonal. Transition density describes coherence between states; it is distinct from the excited-state-minus-ground-state density. Hole and electron NTOs indicate removal and attachment character, but their individual orbital densities do not by themselves equal the full density difference in a general correlated or response-theory treatment.</p>
+
+<h2 id="a-note-on-td-dft-and-tda">10. A Note on TD-DFT and TDA</h2>
+
+<p>In the Tamm–Dancoff approximation (TDA), only the excitation amplitudes <span class="math inline">\(X\)</span> appear, and the teaching model can be written as</p>
+
+<p><span class="math display">\[T_{ia} \approx X_{ia}\]</span></p>
+
+<p>Full TD-DFT contains excitation amplitudes <span class="math inline">\(X\)</span> and de-excitation amplitudes <span class="math inline">\(Y\)</span>. The exact transition matrix used to generate NTOs can depend on the theoretical formulation and the program implementation. Therefore, do not combine all arrows or coefficients printed in the output without checking the software’s convention.</p>
+
+<p>Added example — In a stated TDA convention with <span class="math inline">\(T = X\)</span> and <span class="math inline">\(X = \begin{bmatrix}
+0.8 &amp; 0.6
+\end{bmatrix}\)</span>, the only singular value is 1. The hole NTO is the single occupied orbital, and the electron NTO is <span class="math inline">\(0.8\phi_{1}^{virt} + 0.6\phi_{2}^{virt}\)</span>. In a full response calculation, a program might form a spin-summed transition-density quantity involving <span class="math inline">\(X + Y\)</span>; this is not a universal instruction to add printed amplitudes. Check the state, spin adaptation, normalization, and matrix orientation in that program’s documentation.</p>
+
+<p>Complex-amplitude convention — All numerical excitation examples above use real amplitudes. For complex CIS coefficients defined by <span class="math inline">\(|\Psi_{I}\rangle = \sum_{ia}X_{ia}â_{a}^{\dagger}â_{i}|\Phi_{0}\rangle\)</span>, the occupied-row matrix associated with the excitation-directed one-electron operator’s adjoint uses conjugated coefficients, <span class="math inline">\(T_{ia} = X_{ia}^{*}\)</span>. Alternatively, defining the opposite transition-density orientation changes which coefficients are conjugated. The algebraic SVD identities hold for any consistently defined complex <span class="math inline">\(T\)</span>; the teaching shorthand <span class="math inline">\(T = X\)</span> must not override that convention. Spatial spin adaptation can also introduce normalization factors.</p>
+
+<h2 id="practical-summary">11. Practical Summary</h2>
+
+<p>1. Select the relevant occupied orbitals and fix the row order.</p>
+
+<p>2. Select the relevant virtual orbitals and fix the column order.</p>
+
+<p>3. For each excitation <span class="math inline">\(i \rightarrow a\)</span>, place its signed amplitude in entry <span class="math inline">\(T_{ia}\)</span>.</p>
+
+<p>4. For missing or negligible excitations, use zero only as a teaching approximation.</p>
+
+<p>5. Do not square the coefficients when constructing <span class="math inline">\(T\)</span>.</p>
+
+<p>6. Apply the SVD, <span class="math inline">\(T = U\Lambda V^{\dagger}\)</span>.</p>
+
+<p>7. Use <span class="math inline">\(U\)</span> to construct the hole NTOs and <span class="math inline">\(V\)</span> to construct the electron NTOs.</p>
+
+<p>8. Examine <span class="math inline">\(\lambda_{k}^{2}\)</span> to assess the importance of each NTO pair.</p>
+
+<p>When <span class="math inline">\(T\)</span> is not normalized, use <span class="math inline">\(w_{k} = \lambda_{k}^{2}/\sum_{j}\ \lambda_{j}^{2}\)</span> for relative contributions. In the corrected 2 × 2 calculation, these weights are 83.71% and 16.29%; in an exact one-pair example, the only nonzero weight is 100%.</p>
+
+<p><span class="math display">\[excitation\ amplitudes\  \rightarrow \ T\  \rightarrow \ SVD\  \rightarrow \ NTOs\]</span></p>
+
+<h2 id="key-concept-to-remember">12. Key Concept to Remember</h2>
+
+<p>An entry <span class="math inline">\(T_{ia}\)</span> is neither an orbital nor a probability. It is the amplitude associated with an excitation connecting the occupied and virtual spaces. The SVD finds new linear combinations within the two spaces that make this connection diagonal and as compact as possible. These combinations are the NTOs.</p>
+
+<h3 id="supplementary-reading">Supplementary reading</h3>
+
+<p>For a software-level description of NTO construction and interpretation: Q-Chem 7.0 User’s Manual, Section 7.13.3, “Natural Transition Orbitals,” https://manual.q-chem.com/latest/sect_NTOs.html. For formal reduced-density-operator foundations: Thibaud Etienne, “Natural-orbital representation of molecular electronic transitions,” arXiv:2104.11947v2 (2022), https://arxiv.org/abs/2104.11947. The numerical corrections and worked calculations in these notes follow directly from the displayed matrices.</p>
+

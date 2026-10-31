@@ -1,0 +1,31 @@
+---
+title: Home
+---
+<section class="hero" aria-labelledby="intro-title">
+  <div>
+    <span class="eyebrow">Physical &amp; Computational Chemistry</span>
+    <h1 id="intro-title">Understanding molecules.<br>Sharing knowledge.</h1>
+    <p class="intro">I am Ademir Camargo, a professor of physical chemistry at the State University of Goiás in Anápolis, Brazil.</p>
+    <p>My work combines quantum chemistry, electronic structure calculations, and molecular dynamics to understand molecular properties, interactions, and reactivity. This website brings together my research, scientific publications, and teaching materials.</p>
+    <div class="text-links"><a href="{{ '/about/' | relative_url }}">Academic biography →</a><a href="{{ '/publications/' | relative_url }}">Publications →</a><a href="{{ '/teaching/' | relative_url }}">Teaching materials →</a></div>
+  </div>
+  <figure class="portrait"><img src="{{ '/assets/ademir-camargo.jpg' | relative_url }}" alt="Ademir Camargo standing in front of a mountain landscape" width="270" height="300"><figcaption>Ademir Camargo · State University of Goiás</figcaption></figure>
+</section>
+<div class="home-columns">
+  <section>
+    <span class="eyebrow">Research</span><h2>Molecular structure and dynamics</h2>
+    <p>From electronic structure to the motion of atoms, I study how molecular interactions shape the behavior of chemical systems.</p>
+    <ul><li>Electronic structure and density functional theory</li><li>Ab initio molecular dynamics and solvation</li><li>Excited-state dynamics and photochemistry</li><li>Molecular properties and structure–activity relationships</li></ul>
+    <a href="{{ '/research/' | relative_url }}">Explore research →</a>
+  </section>
+  <section>
+    <span class="eyebrow">Teaching</span><h2>Notes for learning and practice</h2>
+    <p>Mathematical foundations, quantum chemistry, and molecular simulation, with equations and derivations presented as readable web pages.</p>
+    <ul class="resource-list"><li><h3><a href="{{ '/teaching/#mathematical-foundations' | relative_url }}">Mathematical foundations</a></h3><p>Vector spaces, operators, variational methods, and numerical techniques.</p></li><li><h3><a href="{{ '/teaching/#quantum-chemistry' | relative_url }}">Quantum chemistry</a></h3><p>Quantum theory and the mathematical description of molecular systems.</p></li><li><h3><a href="{{ '/teaching/#molecular-dynamics' | relative_url }}">Molecular dynamics</a></h3><p>Methods for studying the evolution of atomic and molecular systems.</p></li></ul>
+  </section>
+</div>
+<section class="page-body">
+  <div class="section-heading"><h2>Recent publications</h2><a href="{{ '/publications/' | relative_url }}">View all publications →</a></div>
+  {% assign recent = site.data.publications | where: 'type', 'journal-article' | sort: 'date' | reverse %}
+  {% for pub in recent limit:3 %}<article class="recent-work"><h3><a href="{{ pub.url | escape }}">{{ pub.title | escape }}</a></h3><p class="meta">{{ pub.journal | escape }} · {{ pub.year }}</p></article>{% endfor %}
+</section>

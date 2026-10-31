@@ -1,0 +1,39 @@
+title: Ademir Camargo
+description: Physical chemistry, quantum chemistry, and molecular dynamics at the State University of Goiás.
+url: "https://ademircamargo57.github.io"
+baseurl: "/myWebPage"
+lang: en-US
+markdown: kramdown
+kramdown:
+  input: GFM
+  math_engine: mathjax
+permalink: pretty
+collections:
+  lessons:
+    output: true
+    permalink: /teaching/:name/
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+  - scope:
+      path: ""
+      type: lessons
+    values:
+      layout: lesson
+      math: true
+exclude:
+  - tools
+  - working
+  - README.md
+  - CONTENT_STATUS.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - node_modules
+  - package.json
+  - package-lock.json
+  - Currículo Lattes.pdf
+  - requirements.txt
+  - output

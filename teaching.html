@@ -1,0 +1,16 @@
+---
+title: Teaching
+permalink: /teaching/
+---
+<div class="page-heading"><span class="eyebrow">Teaching at UEG</span><h1>Teaching materials</h1><p class="deck">Notes, derivations, and practical methods for students of physical and computational chemistry.</p><p>Choose a topic to read online. Each lesson includes mathematical notation and a print layout for saving a personal PDF.</p></div>
+{% assign subjects = 'Mathematical foundations|Quantum chemistry|Molecular dynamics' | split: '|' %}
+<div class="page-body">
+{% for subject in subjects %}
+<section class="subject" id="{{ subject | slugify }}"><h2>{{ subject }}</h2>
+<ul class="resource-list">
+{% assign lessons = site.lessons | where: 'subject', subject | sort: 'order' %}
+{% for lesson in lessons %}<li><h3><a href="{{ lesson.url | relative_url }}">{{ lesson.title }}</a></h3><p>{{ lesson.description }}</p></li>{% endfor %}
+</ul>
+</section>
+{% endfor %}
+</div>

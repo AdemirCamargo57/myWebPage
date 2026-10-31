@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title | escape }} · {% endif %}{{ site.title | escape }}</title>
+  <meta name="description" content="{{ page.description | default: site.description | escape }}">
+  <meta name="color-scheme" content="light">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}">
+  <script src="{{ '/assets/site.js' | relative_url }}" defer></script>
+  {% if page.math %}
+  <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]'],['$$','$$']],tags:'ams'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},startup:{ready:()=>{MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>document.documentElement.classList.add('math-ready'));}}};</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+  {% endif %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="masthead wrap">
+      <a class="identity" href="{{ '/' | relative_url }}">Ademir Camargo<span>Professor of Physical Chemistry</span></a>
+      <p class="affiliation">State University of Goiás <span>Anápolis, Brazil</span></p>
+    </div>
+    <nav class="site-nav wrap" aria-label="Main navigation">
+      {% for item in site.data.navigation %}
+      <a href="{{ item.url | relative_url }}"{% if page.url == item.url or item.url == '/teaching/' and page.collection == 'lessons' %} aria-current="page"{% endif %}>{{ item.title }}</a>
+      {% endfor %}
+    </nav>
+  </header>
+  <main id="main" class="wrap" tabindex="-1">{{ content }}</main>
+  <footer class="site-footer wrap">
+    <p>Ademir Camargo <span aria-hidden="true">·</span> State University of Goiás</p>
+    <div><a href="mailto:ajc@ueg.br">Email</a><a href="https://orcid.org/0000-0001-9016-222X">ORCID</a><a href="https://lattes.cnpq.br/4703181040916099">Lattes</a><a href="https://github.com/AdemirCamargo57">GitHub</a></div>
+  </footer>
+</body>
+</html>

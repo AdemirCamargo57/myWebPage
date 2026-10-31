@@ -1,0 +1,610 @@
+---
+title: "Reduced Density Gradient and Noncovalent Interactions"
+subject: Quantum chemistry
+order: 40
+description: "Electron density gradients, Hessian eigenvalues, NCI plots, and interpretation of interaction patterns."
+source: CAP-VI_v2.docx
+---
+<p>The Reduced Density Gradient (RDG) is a quantity widely used in quantum chemistry and Non-Covalent Interaction (NCI) analysis. The expression is</p>
+
+<p><span class="math display">\[RDG\left( \mathbf{r} \right) = \frac{1}{2(3\pi^{2})^{1/3}}\frac{\left| \nabla\rho\left( \mathbf{r} \right) \right|}{\rho(\mathbf{r})^{4/3}} \cdot\]</span></p>
+
+<p><strong>Meaning of each term</strong><strong>:</strong> <span class="math inline">\(\rho(\mathbf{r})\)</span> represents the electron density at a point <span class="math inline">\(\mathbf{r}\)</span> in the space around the molecule. Large <span class="math inline">\(\rho\)</span> occurs near nuclei, covalent bonds, and lone pairs. Small <span class="math inline">\(\rho\)</span> occurs in intermolecular regions or far from atoms. The units are usually electrons per volume (<span class="math inline">\(e/bohr^{3}\)</span>). <span class="math inline">\(\nabla\rho(\mathbf{r})\)</span> is the gradient of the density</p>
+
+<p><span class="math display">\[\nabla\rho\left( \mathbf{r} \right) = \left( \frac{\partial\rho}{\partial x},\frac{\partial\rho}{\partial y},\frac{\partial\rho}{\partial z} \right).\]</span></p>
+
+<p>This vector measures how rapidly the electron density changes in space. Its magnitude is given by</p>
+
+<p><span class="math display">\[|\nabla\rho| = \sqrt{\left( \frac{\partial\rho}{\partial x} \right)^{2} + \left( \frac{\partial\rho}{\partial y} \right)^{2} + \left( \frac{\partial\rho}{\partial z} \right)^{2}}\]</span></p>
+
+<p>A large value means that density changes rapidly. A small value means that the density is nearly constant. The denominator <span class="math inline">\(\rho^{4/3}\)</span> normalizes the gradient by the local electron density. Without this term, the gradient would be dominated by high-density regions near nuclei. The exponent <span class="math inline">\(4/3\)</span> comes from the scaling properties of the homogeneous electron gas and the Thomas-Fermi kinetic-energy model. The prefactor</p>
+
+<p><span class="math display">\[\frac{1}{2(3\pi^{2})^{1/3}}\]</span></p>
+
+<p>is simply a normalization constant. Numerically,</p>
+
+<p><span class="math display">\[\frac{1}{2(3\pi^{2})^{1/3}} \approx 0.1616\]</span></p>
+
+<p>It is important to note that the RDG is dimensionless.</p>
+
+<p><strong>Physical interpretation:</strong> RDG measures how rapidly density changes relative to the local density itself. Low RDG <strong>(</strong><span class="math inline">\(RDG \approx 0\)</span>) occurs when the density is smooth and the gradient is small. It is observed in covalent-bond regions, hydrogen-bond regions, and van der Waals interaction regions. These are exactly the regions highlighted in the NCI (Non-Covalent Interactions) analysis. Large RDG values occur when the density changes abruptly and the density is very low. It is observed far from molecules, near nodal regions, and in regions with little chemical significance.</p>
+
+<p>RDG is the key quantity in the <strong>NCI (Non-Covalent Interaction)</strong> method developed by Johnson et al. (2010). The computational procedure consists of the following steps: i) compute <span class="math inline">\(\rho(\mathbf{r})\)</span>; ii) compute <span class="math inline">\(\left| \nabla\rho\left( \mathbf{r} \right) \right|\)</span>; iii) compute the Hessian eigenvalues of the density; iv) compute the RDG value at <strong>r</strong>; v) Plot RDG versus <span class="math inline">\(sign(\lambda_{2})\rho\)</span>, where <span class="math inline">\(\lambda_{2}\)</span> is the second eigenvalue of the density Hessian. This allows us to identify:</p>
+
+<table style="width:65%;">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr>
+<th>Interaction</th>
+<th>sign(<span class="math inline">\(\lambda_{2}\)</span>)<span class="math inline">\(\rho\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Attractive (H-bond, halogen bond)</td>
+<td>Negative</td>
+</tr>
+<tr>
+<td>van der Waals</td>
+<td>Near zero</td>
+</tr>
+<tr>
+<td>Steric repulsion</td>
+<td>Positive</td>
+</tr>
+</tbody>
+</table>
+
+<p>For example, consider a hydrogen bond</p>
+
+<p><span class="math display">\[O - H\cdots O.\]</span></p>
+
+<p>Between the donor and acceptor, the electron density is low, and the gradient is also low. Therefore,</p>
+
+<p><span class="math display">\[RDG = \frac{\text{small}}{\text{small}}\]</span></p>
+
+<p>produces a characteristic minimum. When plotted as an isosurface (typically RDG = 0.5), the hydrogen bond appears as a colored surface between the interacting atoms.</p>
+
+<p>In programs such as Multiwfn, NCIPLOT, VMD, Chimera, IQA/NCI analysis packages, one commonly plots</p>
+
+<p><span class="math display">\[RDG \times sign\left( \lambda_{2} \right)\rho.\]</span></p>
+
+<p>The resulting peaks identify hydrogen bonds, π-π stacking, CH···π interactions, van der Waals contacts, and steric effects.</p>
+
+<p>This is why RDG has become one of the most popular descriptors for analyzing weak intermolecular interactions in crystals, supramolecular systems, and biomolecules.</p>
+
+<p>In crystal engineering and supramolecular chemistry, RDG is essentially a tool that converts electron density into a map in which weak interactions become visually detectable and can be classified as attractive, dispersive, or repulsive.</p>
+
+<p>We use the sign of <span class="math inline">\(\lambda_{2}\)</span> and not <span class="math inline">\(\lambda_{1}\)</span> or <span class="math inline">\(\lambda_{3}\ \)</span>because <span class="math inline">\(\lambda_{2}\)</span> is the eigenvalue that best distinguishes <strong>attractive</strong> from <strong>repulsive</strong> interactions in the interaction region. <span class="math inline">\(\lambda_{1}\)</span> is almost always negative and therefore cannot make this distinction. Let’s examine this question closely. The Hessian of the electron density is given by</p>
+
+<p><span class="math display">\[H(\rho) = \left( \frac{\partial^{2}\rho}{\partial x_{i}\partial x_{j}} \right)\]</span></p>
+
+<p>and its eigenvalues are conventionally ordered as</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; \lambda_{2} &lt; \lambda_{3}.\]</span></p>
+
+<p>The corresponding eigenvectors define three mutually perpendicular directions around a point in space. For a bond critical point or interaction region, we typically find</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; 0\]</span></p>
+
+<p><span class="math display">\[\lambda_{2} &lt; 0\ \text{or}\  &gt; 0\]</span></p>
+
+<p><span class="math display">\[\lambda_{3} &gt; 0.\]</span></p>
+
+<p>Each eigenvalue measures the curvature of the electron density along one principal direction. Negative curvature (<span class="math inline">\(\lambda &lt; 0\)</span>) means that <span class="math inline">\(\rho\ \)</span>has a local maximum along that direction. Positive curvature (<span class="math inline">\(\lambda &gt; 0\)</span>) means <span class="math inline">\(\rho\)</span> has a local minimum along that direction.</p>
+
+<p>In a hydrogen bond,</p>
+
+<p><span class="math display">\[O - H\cdots O\]</span></p>
+
+<p>At the interaction region, the density accumulates between the donor and the acceptor. The density is concentrated in two perpendicular directions. The Hessian typically looks like</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; 0\]</span></p>
+
+<p><span class="math display">\[\lambda_{2} &lt; 0\]</span></p>
+
+<p><span class="math display">\[\lambda_{3} &gt; 0.\]</span></p>
+
+<p>The two negative eigenvalues indicate the density concentration perpendicular to the interaction axis. The positive eigenvalue corresponds to the interaction direction. Thus</p>
+
+<p><span class="math display">\[\lambda_{2} &lt; 0\]</span></p>
+
+<p>signals attraction.</p>
+
+<p>In steric repulsion, when two atoms are pushed too close together, the density between them is depleted. The eigenvalues become</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; 0\]</span></p>
+
+<p><span class="math display">\[\lambda_{2} &gt; 0\]</span></p>
+
+<p><span class="math display">\[\lambda_{3} &gt; 0.\]</span></p>
+
+<p>Notice that <span class="math inline">\(\lambda_{1\ }\)</span>remains negative. Only <span class="math inline">\(\lambda_{2\ }\)</span>changes sign. This is the key observation. <span class="math inline">\(\lambda_{1}\)</span> is almost always negative, and it cannot distinguish between the two distinct physical situations. The density is usually concentrated in at least one direction. Therefore</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; 0\]</span></p>
+
+<p>For hydrogen bonds, van der Waals contacts, steric effects, and covalent bonds. It carries very little information about the type of interaction. If we plotted</p>
+
+<p><span class="math display">\[sign(\lambda_{1})\rho\]</span></p>
+
+<p>almost every point would appear on the negative side. The attractive and repulsive regions would overlap. The NCI plot would lose its diagnostic power.</p>
+
+<p>The eigenvalue <span class="math inline">\(\lambda_{3}\)</span> is almost always positive for both attractive and repulsive interactions (<span class="math inline">\(\lambda_{3} &gt; 0\)</span>). Therefore, <span class="math inline">\(sign(\lambda_{3})\rho\)</span> would place almost everything on the positive side. Again, we would lose the ability to distinguish attraction from repulsion.</p>
+
+<p>The middle eigenvalue is the one that changes sign according to the nature of the interaction:</p>
+
+<table style="width:61%;">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr>
+<th>Interaction</th>
+<th><span class="math display">\[\lambda_{1}\]</span></th>
+<th><span class="math display">\[\lambda_{2}\]</span></th>
+<th><span class="math display">\[\lambda_{3}\]</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Covalent bond</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr>
+<td>Hydrogen bond</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr>
+<td>van der Waals</td>
+<td>-</td>
+<td>≈0</td>
+<td>+</td>
+</tr>
+<tr>
+<td>Steric clash</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+</tbody>
+</table>
+
+<p>This makes <span class="math inline">\(\lambda_{2}\)</span> the perfect discriminator.</p>
+
+<p>We can give a geometric interpretation of the eigenvalues. Imagine the density around an interaction region as an ellipsoid. For an <strong>attractive interaction</strong>, the density is concentrated in two perpendicular directions:</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; 0,\quad\quad\lambda_{2} &lt; 0.\]</span></p>
+
+<p>The density "bulges" toward the interaction.</p>
+
+<p>For <strong>repulsive interaction</strong>, the density is concentrated in only one direction:</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; 0,\quad\quad\lambda_{2} &gt; 0.\]</span></p>
+
+<p>The density is pushed away from the internuclear region. Thus, the sign of <span class="math inline">\(\lambda_{2}\)</span> tells us whether electron density is <strong>accumulating</strong> or <strong>depleting</strong> in the interaction region.</p>
+
+<p>A very common misconception is to associate the eigenvalues <span class="math inline">\(\lambda_{1}\)</span>, <span class="math inline">\(\lambda_{2}\)</span>, and <span class="math inline">\(\lambda_{3}\)</span> are with the laboratory <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>, and <span class="math inline">\(z\)</span> axes. They are associated with the principal axes of the density curvature tensor (the Hessian) at each point in space.</p>
+
+<p>We can make an analogy with the inertia tensor. We can remember that for a molecule, the Cartesian axes are arbitrary, and the principal moments of inertia are obtained by diagonalizing the inertia tensor.</p>
+
+<p>The same idea applies here. The Hessian</p>
+
+<p><span class="math display">\[H(\rho) = \begin{pmatrix}
+\rho_{xx} &amp; \rho_{xy} &amp; \rho_{xz} \\
+\rho_{yx} &amp; \rho_{yy} &amp; \rho_{yz} \\
+\rho_{zx} &amp; \rho_{zy} &amp; \rho_{zz}
+\end{pmatrix}\]</span></p>
+
+<p>is generally not diagonal in the laboratory frame. When we diagonalize it, we obtain <span class="math inline">\(\lambda_{1},\lambda_{2},\lambda_{3}\)</span> and their corresponding eigenvectors <span class="math inline">\(\mathbf{e}_{1},\mathbf{e}_{2},\mathbf{e}_{3}.\)</span> These eigenvectors define a <strong>local coordinate system</strong> that changes from point to point. Therefore, <span class="math inline">\(\lambda_{1} \neq x,\ \lambda_{2} \neq y,\lambda_{3} \neq z\)</span> in general. Each eigenvector points along a direction where the density curvature is extremal. The corresponding eigenvalue measures the curvature along that direction:</p>
+
+<p><span class="math display">\[\lambda_{i} = \frac{\partial^{2}\rho}{\partial e_{i}^{2}} \cdot\]</span></p>
+
+<p>So, <span class="math inline">\(\mathbf{e}_{1}\)</span> points in the direction of the largest negative curvature; <span class="math inline">\(\mathbf{e}_{2}\)</span> points in the direction of the intermediate curvature, and <span class="math inline">\(\mathbf{e}_{3}\)</span> points in the direction of the largest positive curvature. For an interaction region between two atoms, such as a hydrogen bond,</p>
+
+<p><span class="math display">\[O - H\cdots O.\]</span></p>
+
+<p>Near the interaction region, one typically finds <span class="math inline">\(\lambda_{1} &lt; 0,\ \ \lambda_{2} &lt; 0,\ and\ \lambda_{3} &gt; 0.\)</span> The eigenvectors<br>
+<span class="math inline">\(\mathbf{e}_{3}\)</span> usually point along the interaction axis</p>
+
+<p><span class="math display">\[H\cdots O\]</span></p>
+
+<p>While <span class="math inline">\(\mathbf{e}_{1},\mathbf{e}_{2}\)</span> are approximately perpendicular to it. A schematic view is:</p>
+
+<p><code>      e1</code><br>
+<code>          ↑</code><br>
+<code>          |</code><br>
+<code>          |</code><br>
+<code>H</code><code>-------</code><code>-</code><code>BCP-------O</code><br>
+<code>          |</code><br>
+<code>          |</code><br>
+<code>          →e2</code><br>
+<code>Interaction axis ≈ e3</code>, where BCP denotes the bond critical point.</p>
+
+<p>So, we can state that at a bond critical point (or an NCI interaction region), e<sub>3</sub> is usually parallel to the interaction line, while e<sub>1</sub> and e<sub>2</sub> span the plane perpendicular to the interaction. <span class="math inline">\(\lambda_{2}\)</span> is used because its sign distinguishes attraction from repulsion, not because of its direction.</p>
+
+<p>This distinction is very important in NCI theory, because many papers mention <span class="math inline">\(\lambda_{2}\)</span> without emphasizing that the physical reason for its use is <strong>topological classification of the density</strong>, not its orientation in space.</p>
+
+<p><strong>Formula Derivation</strong></p>
+
+<p>A useful derivation starts with the <strong>dimensionless density gradient</strong> used in DFT. The reduced density gradient is usually written as</p>
+
+<p><span class="math display">\[s\left( \mathbf{r} \right) = \frac{\left| \nabla\rho\left( \mathbf{r} \right) \right|}{2k_{F}\left( \mathbf{r} \right)\rho\left( \mathbf{r} \right)}\]</span></p>
+
+<p>where <span class="math inline">\(k_{F}\)</span> is the local <em>Fermi wave vector</em> of a uniform electron gas. For a homogeneous electron gas,</p>
+
+<p><span class="math display">\[k_{F}\left( \mathbf{r} \right) = \left\lbrack 3\pi^{2}\rho\left( \mathbf{r} \right) \right\rbrack^{\frac{1}{3}}.\]</span></p>
+
+<p>Substituting this into the definition of <span class="math inline">\(s(\mathbf{r})\)</span>, we have</p>
+
+<p><span class="math display">\[s\left( \mathbf{r} \right) = \frac{\left| \nabla\rho\left( \mathbf{r} \right) \right|}{2\left\lbrack 3\pi^{2}\rho\left( \mathbf{r} \right) \right\rbrack^{\frac{1}{3}}\rho\left( \mathbf{r} \right)} \cdot\]</span></p>
+
+<p>Now separate the density term, we have</p>
+
+<p><span class="math display">\[\left\lbrack 3\pi^{2}\rho(\mathbf{r}) \right\rbrack^{1/3} = (3\pi^{2})^{1/3}\rho(\mathbf{r})^{1/3}\]</span></p>
+
+<p>Therefore,</p>
+
+<p><span class="math display">\[s(\mathbf{r}) = \frac{|\nabla\rho(\mathbf{r})|}{2(3\pi^{2})^{1/3}\rho(\mathbf{r})^{1/3}\rho(\mathbf{r})}\]</span></p>
+
+<p>Using <span class="math inline">\(\rho^{1/3}\rho = \rho^{4/3}\)</span>, we obtain</p>
+
+<p><span class="math display">\[s(\mathbf{r}) = \frac{1}{2(3\pi^{2})^{1/3}}\frac{|\nabla\rho(\mathbf{r})|}{\rho(\mathbf{r})^{4/3}}\]</span></p>
+
+<p>Thus,</p>
+
+<p><span class="math display">\[\boxed{RDG\left( \mathbf{r} \right) = \frac{1}{2(3\pi^{2})^{1/3}}\frac{\left| \nabla\rho\left( \mathbf{r} \right) \right|}{\rho(\mathbf{r})^{4/3}} \cdot}\]</span></p>
+
+<p>The idea is that RDG compares the <strong>rate of spatial variation of electron density</strong> with the density expected for a local <strong>homogeneous electron gas</strong>. Low RDG values in low-density regions are especially useful for identifying weak non-covalent interactions.</p>
+
+<p>The local Fermi wave vector <span class="math inline">\(k_{F}(\mathbf{r})\)</span> appears in the derivation because RDG was originally designed as a <strong>dimensionless measure of density inhomogeneity</strong>, comparing the actual electron-density variation to the natural length scale of a homogeneous electron gas (HEG), the reference system underlying most DFT approximations.</p>
+
+<p>Virtually all modern density functional theory begins with the <strong>uniform electron gas (UEG)</strong> or <strong>homogeneous electron gas (HEG)</strong>. In this model, <span class="math inline">\(\rho(\mathbf{r}) = \rho_{0}\)</span> is constant everywhere. Because the density is constant,</p>
+
+<p><span class="math display">\[\nabla\rho = 0\]</span></p>
+
+<p>and, therefore, the system is perfectly homogeneous. The idea is that real molecules differ from this idealized reference, and one would like a quantity that measures how far the local density deviates from homogeneity. One could simply use</p>
+
+<p><span class="math display">\[|\nabla\rho|\]</span></p>
+
+<p>as a measure of inhomogeneity. However, this quantity is not very meaningful because it depends on the density's absolute magnitude. For example, in region A, we could have</p>
+
+<p><span class="math display">\[\rho = 100\]</span></p>
+
+<p><span class="math display">\[|\nabla\rho| = 10\]</span></p>
+
+<p>and in region B, we could have</p>
+
+<p><span class="math display">\[\rho = 0.01\]</span></p>
+
+<p><span class="math display">\[|\nabla\rho| = 10\]</span></p>
+
+<p>The same gradient represents very different physical situations. We need a normalized quantity.</p>
+
+<p>What is the natural length scale of an electron gas? In a uniform electron gas, the occupied orbitals fill momentum space up to the Fermi momentum <span class="math inline">\(k_{F}.\)</span> The electron density and Fermi wave vector are related by</p>
+
+<p><span class="math display">\[\rho = \frac{k_{F}^{3}}{3\pi^{2}} \cdot\]</span></p>
+
+<p>Solving for <span class="math inline">\(k_{F}\)</span>,</p>
+
+<p><span class="math display">\[k_{F} = (3\pi^{2}\rho)^{1/3}.\]</span></p>
+
+<p>This quantity defines the characteristic spatial scale of the electron gas. The corresponding length is</p>
+
+<p><span class="math display">\[\mathcal{l}_{F} \sim \frac{1}{k_{F}} \cdot\]</span></p>
+
+<p>Thus, high density implies large <span class="math inline">\(k_{F}\)</span> that implies a short length scale, and low density implies small <span class="math inline">\(k_{F}\)</span> that implies a long length scale. A density gradient has dimensions</p>
+
+<p><span class="math display">\[|\nabla\rho| \sim \frac{\rho}{L} \cdot\]</span></p>
+
+<p>To make it dimensionless, we divide by a quantity with the same dimensions. Since</p>
+
+<p><span class="math display">\[k_{F} \sim \frac{1}{L}\]</span></p>
+
+<p>the product <span class="math inline">\(k_{F}\rho\)</span> has dimensions</p>
+
+<p><span class="math display">\[\frac{\rho}{L} \cdot\]</span></p>
+
+<p>Therefore,</p>
+
+<p><span class="math display">\[\frac{|\nabla\rho|}{k_{F}\rho}\]</span></p>
+
+<p>is dimensionless. This is precisely the origin of the reduced gradient. The conventional definition is</p>
+
+<p><span class="math display">\[s\left( \mathbf{r} \right) = \frac{|\nabla\rho|}{2k_{F}\rho} \cdot\]</span></p>
+
+<p>Historically, the reduced gradient first appeared in the development of <strong>Generalized Gradient Approximations (GGAs)</strong>. The exchange energy of a slowly varying electron gas can be expanded as</p>
+
+<p><span class="math display">\[E_{x} = E_{x}^{LDA} + \text{gradient corrections}.\]</span></p>
+
+<p>The gradient expansion naturally produces terms involving</p>
+
+<p><span class="math display">\[\left( \frac{|\nabla\rho|}{2k_{F}\rho} \right)^{2}.\]</span></p>
+
+<p>Thus <span class="math inline">\(s\)</span> emerged as the natural variable describing departures from uniformity. Later, Johnson's NCI method adopted exactly the same quantity and renamed it the <strong>Reduced Density Gradient (RDG)</strong>.</p>
+
+<p>The RDG is well-suited to non-covalent interactions because, in regions of weak interactions, the density is low and changes slowly. Therefore <span class="math inline">\(\rho \ll 1\)</span> and <span class="math inline">\(|\nabla\rho|\)</span> is also small. The reduced gradient becomes small enough to reveal these regions as minima. Hydrogen bonds, π-stacking interactions, and van der Waals contacts all produce characteristic low-RDG regions.</p>
+
+<p>The local Fermi wave vector is not introduced arbitrarily. It is the only intrinsic momentum scale of a homogeneous electron gas. Therefore</p>
+
+<p><span class="math display">\[k_{F}^{- 1}\]</span></p>
+
+<p>is the only intrinsic length scale available. When we divide the density gradient by <span class="math inline">\(k_{F}\rho\)</span>, we are essentially asking: How rapidly does the density vary compared with the variation expected on the natural length scale of an electron gas of the same density?</p>
+
+<p>This is why the RDG is fundamentally a measure of local density inhomogeneity relative to a uniform electron gas reference. That connection to the homogeneous electron gas is also why RDG, GGAs, the gradient expansion, and the local Fermi wave vector are all intimately connected in density functional theory.</p>
+
+<p>The relation between electron density and the Fermi wave vector is not obvious at first glance because one quantity lives in <strong>real space</strong> and the other in <strong>momentum space</strong>.</p>
+
+<p>For a deeper understanding of what the Fermi wave vector is, consider an infinite homogeneous electron gas. The electrons are free particles moving in a box of volume <span class="math inline">\(V\)</span>. The wavefunctions are plane waves:</p>
+
+<p><span class="math display">\[\psi_{\mathbf{k}}\left( \mathbf{r} \right) = \frac{1}{\sqrt{V}}e^{i\mathbf{k} \cdot \mathbf{r}}.\]</span></p>
+
+<p>Each state is characterized by a wave vector <span class="math inline">\(\mathbf{k}\)</span>. As the electrons are free particles, they have only kinetic energy, that is,</p>
+
+<p><span class="math display">\[E = \frac{\hslash^{2}}{2m}\nabla^{2}\psi_{\mathbf{k}}\left( \mathbf{r} \right) = \frac{\hslash^{2}k^{2}}{2m} \cdot\]</span></p>
+
+<p>So,</p>
+
+<p><span class="math display">\[E(k) = \frac{\hslash^{2}k^{2}}{2m}.\]</span></p>
+
+<p>Using the Pauli principle, at <span class="math inline">\(T = 0\)</span>, electrons occupy the lowest energy states first. Because of spin, each <span class="math inline">\(\mathbf{k}\)</span> state can contain two electrons: spin up and spin down. As we add electrons, the occupied states fill a sphere in <span class="math inline">\(k\)</span>-space. The radius of this sphere is called the <strong>Fermi wave vector</strong> <span class="math inline">\(k_{F}.\)</span></p>
+
+<table>
+<colgroup>
+<col style="width: 50%">
+<col style="width: 49%">
+</colgroup>
+<thead>
+<tr>
+<th><img src="{{ '/assets/lessons/molecular-properties/media/image1.png' | relative_url }}" style="width:3.1in;height:2.42896in" alt="Occupied wavevector states inside a spherical Fermi surface with radius k_F." loading="lazy"></th>
+<th><img src="{{ '/assets/lessons/molecular-properties/media/image2.png' | relative_url }}" style="width:3.08333in;height:2.60604in" alt="Fermi sphere centered at the origin of wavevector space with axes k_x, k_y, and k_z." loading="lazy"></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+<p>Every state inside the sphere is occupied, and every state outside the sphere is empty. The key derivation is to count how many quantum states fit within the Fermi sphere. The volume of a sphere of radius <span class="math inline">\(k_{F}\)</span> is</p>
+
+<p><span class="math display">\[\frac{4\pi}{3}k_{F}^{3}.\]</span></p>
+
+<p>In quantum mechanics, each allowed state occupies a volume</p>
+
+<p><span class="math display">\[\frac{(2\pi)^{3}}{V}\]</span></p>
+
+<p>in <span class="math inline">\(k\)</span>-space. The factor</p>
+
+<p><span class="math display">\[\frac{(2\pi)^{3}}{V}\]</span></p>
+
+<p>comes from the <strong>quantization of wave vectors in a box</strong>. Consider a cubic box of side <span class="math inline">\(L\)</span>. The volume is</p>
+
+<p><span class="math display">\[V = L^{3}.\]</span></p>
+
+<p>For a free electron, <span class="math inline">\(\psi(\mathbf{r}) = Ae^{i\mathbf{k} \cdot \mathbf{r}}.\)</span> To keep the mathematics simple, we impose periodic boundary conditions:</p>
+
+<p><span class="math display">\[\psi(x + L,y,z) = \psi(x,y,z)\]</span></p>
+
+<p>and, similarly, for <span class="math inline">\(y\)</span> and <span class="math inline">\(z\)</span>. Applying the boundary condition, we have</p>
+
+<p><span class="math display">\[e^{ik_{x}(x + L)} = e^{ik_{x}x}.\]</span></p>
+
+<p>Therefore,</p>
+
+<p><span class="math display">\[e^{ik_{x}L} = 1.\]</span></p>
+
+<p>This occurs only when <span class="math inline">\(k_{x}L = 2\pi n_{x},\)</span> where <span class="math inline">\(n_{x} = 0, \pm 1, \pm 2,\ldots\)</span></p>
+
+<p>Thus</p>
+
+<p><span class="math display">\[\boxed{k_{x} = \frac{2\pi}{L}n_{x}}\]</span></p>
+
+<p>and similarly</p>
+
+<p><span class="math display">\[k_{y} = \frac{2\pi}{L}n_{y},\quad\quad k_{z} = \frac{2\pi}{L}n_{z}.\]</span></p>
+
+<p>Adjacent quantum numbers differ by one: <span class="math inline">\(n_{x} \rightarrow n_{x} + 1.\)</span></p>
+
+<p>Therefore, the spacing in <span class="math inline">\(k\)</span>-space is</p>
+
+<p><span class="math display">\[\Delta k_{x} = \frac{2\pi}{L} \cdot\]</span></p>
+
+<p>Likewise,</p>
+
+<p><span class="math display">\[\Delta k_{y} = \Delta k_{z} = \frac{2\pi}{L} \cdot\]</span></p>
+
+<p>Each allowed state corresponds to one point in <span class="math inline">\(k\)</span>-space. The elementary cell surrounding that point has a volume</p>
+
+<p><span class="math display">\[\Delta k_{x}\Delta k_{y}\Delta k_{z}.\]</span></p>
+
+<p>Therefore,</p>
+
+<p><span class="math display">\[\Delta V_{k} = \left( \frac{2\pi}{L} \right)^{3}.\]</span></p>
+
+<p>Since <span class="math inline">\(V = L^{3},\)</span> we obtain</p>
+
+<p><span class="math display">\[\boxed{\Delta V_{k} = \frac{(2\pi)^{3}}{V}}\]</span></p>
+
+<p>This is the volume occupied by one quantum state in <span class="math inline">\(k\)</span>-space. This formula is important because if we have some region in <span class="math inline">\(k\)</span>-space with volume <span class="math inline">\(V_{k}\)</span>, the number of allowed states inside it is approximately</p>
+
+<p><span class="math display">\[N_{\text{states}} = \frac{V_{k}}{\Delta V_{k}} \cdot\]</span></p>
+
+<p>Substituting, we have</p>
+
+<p><span class="math display">\[N_{\text{states}} = V_{k}\frac{V}{(2\pi)^{3}}.\]</span></p>
+
+<p>This is the famous density-of-states factor. Let’s apply it to the Fermi sphere. At <span class="math inline">\(T = 0\)</span>, all states inside the sphere</p>
+
+<p><span class="math display">\[k \leq k_{F}\]</span></p>
+
+<p>are occupied. The sphere volume is</p>
+
+<p><span class="math display">\[V_{k} = \frac{4\pi}{3}k_{F}^{3}.\]</span></p>
+
+<p>Therefore</p>
+
+<p><span class="math display">\[N = 2\frac{V}{(2\pi)^{3}}\frac{4\pi}{3}k_{F}^{3}.\]</span></p>
+
+<p>Factor 2 accounts for spin degeneracy: spin up and spin down. Simplifying,</p>
+
+<p><span class="math display">\[N = \frac{Vk_{F}^{3}}{3\pi^{2}} \cdot\]</span></p>
+
+<p>Dividing by <span class="math inline">\(V\)</span>,</p>
+
+<p><span class="math display">\[\boxed{\rho = \frac{N}{V} = \frac{k_{F}^{3}}{3\pi^{2}}}\]</span></p>
+
+<p>which leads directly to</p>
+
+<p><span class="math display">\[\boxed{k_{F} = (3\pi^{2}\rho)^{1/3}.}\]</span></p>
+
+<p>The factor</p>
+
+<p><span class="math display">\[\frac{(2\pi)^{3}}{V}\]</span></p>
+
+<p>is simply the volume of the smallest "quantum box" in momentum space. Just as a molecule occupies a finite volume in real space, a quantum state occupies a finite volume in <span class="math inline">\(k\)</span>-space. Counting how many such little boxes fit inside the Fermi sphere tells us how many electrons can be accommodated, which is why the electron density becomes directly related to the Fermi wave vector.</p>
+
+<p>The equation</p>
+
+<p><span class="math display">\[k_{F} = (3\pi^{2}\rho)^{1/3}\]</span></p>
+
+<p>tells us that high electron density implies a larger Fermi sphere, and low electron density implies a smaller Fermi sphere. Suppose</p>
+
+<p><span class="math inline">\(\rho = 1\)</span> electron/bohr<span class="math inline">\(^{3}\)</span>.</p>
+
+<p>Then</p>
+
+<p><span class="math inline">\(k_{F} = (3\pi^{2})^{\frac{1}{3}} \approx 3.09\ \)</span>bohr<span class="math inline">\(^{- 1}\)</span>.</p>
+
+<p>If the density becomes eight times larger, <span class="math inline">\(\rho = 8,\)</span> then</p>
+
+<p><span class="math display">\[k_{F} = (3\pi^{2} \times 8)^{1/3} = 2(3\pi^{2})^{1/3}.\]</span></p>
+
+<p>Doubling <span class="math inline">\(k_{F}\)</span> requires eight times more electrons because the volume of the Fermi sphere scales as <span class="math inline">\(k_{F}^{3}\)</span>.</p>
+
+<p>The DFT uses a <em>local</em> Fermi wave vector because the molecule is not homogeneous. The density changes from point to point: <span class="math inline">\(\rho = \rho(\mathbf{r}).\)</span> Kohn and Sham introduced the idea: At each point in the molecule, imagine a fictitious homogeneous electron gas having exactly the same density as the real system at that point. Then the local Fermi wave vector is</p>
+
+<p><span class="math display">\[k_{F}(\mathbf{r}) = \left\lbrack 3\pi^{2}\rho(\mathbf{r}) \right\rbrack^{1/3}.\]</span></p>
+
+<p>Near nuclei, <span class="math inline">\(\rho\)</span> is large and <span class="math inline">\(k_{F}\)</span> is large. In intermolecular regions, <span class="math inline">\(\rho\)</span> is small and <span class="math inline">\(k_{F}\)</span> is small. This is not the actual momentum of an electron. It is the Fermi wave vector that a homogeneous electron gas would have if its density were equal to the local density of the molecule.</p>
+
+<p>In summary,</p>
+
+<p><span class="math display">\[|\nabla\rho|\]</span></p>
+
+<p>has dimensions</p>
+
+<p><span class="math display">\[\frac{\text{electron density}}{\text{length}} \cdot\]</span></p>
+
+<p>To obtain a dimensionless measure, we need a characteristic inverse length. The homogeneous electron gas naturally provides one:</p>
+
+<p><span class="math display">\[k_{F} \sim \frac{1}{L}.\]</span></p>
+
+<p>Thus</p>
+
+<p><span class="math display">\[s = \frac{|\nabla\rho|}{2k_{F}\rho}\]</span></p>
+
+<p>Compares the actual rate at which the density changes with the natural spatial scale of an electron gas having the same density. This is why the local Fermi wave vector enters the RDG formula. The electron density tells us how many electrons are present locally. The local Fermi wave vector tells us what momentum distribution a homogeneous electron gas would need to have to accommodate that many electrons. RDG then measures how rapidly the real density varies compared with that of the reference electron gas.</p>
+
+<p>Let’s now analyze a concrete case shown in the following Figure:</p>
+
+<p><img src="{{ '/assets/lessons/molecular-properties/media/image3.png' | relative_url }}" style="width:6.5in;height:2.56667in" alt="Two RDG versus sign(lambda_2) rho scatter plots at 0.01 ps and 3.15 ps; the later configuration shows more features near zero." loading="lazy"></p>
+
+<p>This figure is a Non-Covalent Interaction (NCI) plot, where the Reduced Density Gradient (RDG) is plotted against <span class="math inline">\(sign(\lambda_{2})\rho\)</span> and is commonly used to analyze hydrogen bonds, van der Waals interactions, and steric repulsions in molecular dynamics simulations.</p>
+
+<p>The two panels correspond to two different times: <strong>A)</strong> 0.01 ps and <strong>B)</strong> 3.15 ps. The vertical axis is <span class="math inline">\(RDG\)</span> and the horizontal axis is <span class="math inline">\(sign(\lambda_{2})\rho\)</span>, where, <span class="math inline">\(\rho\)</span> = electron density, and <span class="math inline">\(\lambda_{2}\)</span> = second eigenvalue of the electron density Hessian. The Hessian is</p>
+
+<p><span class="math display">\[H(\rho) = \begin{pmatrix}
+\frac{\partial^{2}\rho}{\partial x^{2}} &amp; \frac{\partial^{2}\rho}{\partial x\partial y} &amp; \frac{\partial^{2}\rho}{\partial x\partial z} \\
+\frac{\partial^{2}\rho}{\partial y\partial x} &amp; \frac{\partial^{2}\rho}{\partial y^{2}} &amp; \frac{\partial^{2}\rho}{\partial y\partial z} \\
+\frac{\partial^{2}\rho}{\partial z\partial x} &amp; \frac{\partial^{2}\rho}{\partial z\partial y} &amp; \frac{\partial^{2}\rho}{\partial z^{2}}
+\end{pmatrix}\]</span></p>
+
+<p>whose eigenvalues are</p>
+
+<p><span class="math display">\[\lambda_{1} &lt; \lambda_{2} &lt; \lambda_{3}.\]</span></p>
+
+<p>The sign of <span class="math inline">\(\lambda_{2}\)</span> tells whether density accumulates or depletes perpendicular to the interaction region. Negative <span class="math inline">\(\lambda_{2}\)</span> means electron density accumulates between the fragments. These are attractive interactions: Hydrogen bonds, Halogen bonds, Chalcogen bonds, Strong electrostatic attractions. They appear on the left side of the graph (blue region). Positive <span class="math inline">\(\lambda_{2}\)</span> means density is depleted between fragments. These are repulsive interactions: steric effects and Pauli repulsion. They appear on the right side (in the red region). Near zero (<span class="math inline">\(\lambda_{2} \approx 0\)</span>) corresponds to very weak interactions: van der Waals contacts and dispersion interactions. These appear near the center (in the green region).</p>
+
+<p><img src="{{ '/assets/lessons/molecular-properties/media/image4.png' | relative_url }}" style="width:6.5in;height:1.89097in" alt="NCI color scale: negative sign(lambda_2) rho indicates attraction in blue, values near zero indicate weak contacts in green, and positive values indicate repulsion in red." loading="lazy"></p>
+
+<p><strong>Fig. 2.</strong> Commonly used color scale in NCI map and common interpretation of various color ranges.</p>
+
+<p>The color scale is the same quantity:</p>
+
+<p><span class="math display">\[sign(\lambda_{2})\rho\]</span></p>
+
+<p>typically: Blue → attractive; Green → weak vdW; Red → repulsive, which is the standard NCI coloring convention.</p>
+
+<p>The characteristics of "spikes" or "valleys" are important. Whenever an interaction region has low density, the density gradient is also low; therefore, RDG is small, yielding a minimum. The position of the minimum identifies the interaction type.</p>
+
+<p><strong>Panel A (0.01 ps):</strong></p>
+
+<p>The plot is rather smooth. We can see the left minimum around</p>
+
+<p><span class="math display">\[sign(\lambda_{2})\rho \approx - 0.015\]</span></p>
+
+<p>This indicates an attractive interaction. Likely a hydrogen bond, an ion-dipole interaction, or strong electrostatic contact, depending on the system.</p>
+
+<p>Near</p>
+
+<p><span class="math display">\[sign(\lambda_{2})\rho \approx 0\]</span></p>
+
+<p>at the center, there is little structure. This suggests a few weak vdW interactions at this instant.</p>
+
+<p>Around</p>
+
+<p><span class="math display">\[sign(\lambda_{2})\rho \approx + 0.015\]</span></p>
+
+<p>right minimum corresponds to steric repulsion.</p>
+
+<p><strong>Panel B (3.15 ps):</strong></p>
+
+<p>Several narrow spikes appear around</p>
+
+<p><span class="math display">\[sign(\lambda_{2})\rho \approx 0\]</span></p>
+
+<p>These indicate that the interaction network has changed over time. The appearance of multiple features near zero generally means: new weak intermolecular contacts formed, transient van der Waals contacts appeared, and hydrogen bonds are fluctuating. This is exactly what one expects during a molecular dynamics trajectory.</p>
+
+<p><strong>Comparison of A and B</strong></p>
+
+<p>The most important observation is:</p>
+
+<table style="width:84%;">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr>
+<th>0.01 ps</th>
+<th>3.15 ps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simpler NCI profile</td>
+<td>More structured NCI profile</td>
+</tr>
+<tr>
+<td>Few interaction environments</td>
+<td>Several interaction environments</td>
+</tr>
+<tr>
+<td>Less interaction diversity</td>
+<td>More interaction diversity</td>
+</tr>
+</tbody>
+</table>
+
+<p>Thus the molecular configuration at 3.15 ps exhibits a richer set of non-covalent contacts.</p>
+
+<p>A possible interpretation would be the RDG versus sign(<span class="math inline">\(\lambda_{2}\)</span>)<span class="math inline">\(\rho\)</span> plots reveal the evolution of the intermolecular interaction pattern during the simulation. At 0.01 ps the NCI profile is relatively simple, showing distinct attractive and repulsive regions. At 3.15 ps additional spikes emerge near sign(<span class="math inline">\(\lambda_{2}\)</span>)<span class="math inline">\(\rho\)</span> ≈ 0, indicating the formation of transient weak van der Waals contacts and a more complex network of non-covalent interactions. The persistence of negative sign(<span class="math inline">\(\lambda_{2}\)</span>)<span class="math inline">\(\rho\)</span> regions demonstrate the presence of attractive interactions, whereas the positive branch corresponds to steric repulsion between electron clouds.</p>
+
