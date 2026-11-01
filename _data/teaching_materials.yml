@@ -1,0 +1,11 @@
+# Add one entry per PDF. The page sorts entries by week, from first to last.
+# Put PDFs in assets/teaching/ and use the exact filename (including case).
+- week: 1
+  title: Calculus of Variations
+  date: 2026-11-01
+  pdf: /assets/teaching/CAP_I_A_EN.pdf
+  pages: 18
+  description: >-
+    An introduction to variational methods, from the Euler–Lagrange equations
+    and the principles of Fermat and least action to conservation of energy
+    and momentum, multiple dependent variables, and holonomic constraints.

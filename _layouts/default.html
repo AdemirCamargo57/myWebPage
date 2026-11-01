@@ -10,10 +10,6 @@
   <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
   <link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}">
   <script src="{{ '/assets/site.js' | relative_url }}" defer></script>
-  {% if page.math %}
-  <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]'],['$$','$$']],tags:'ams'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},startup:{ready:()=>{MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>document.documentElement.classList.add('math-ready'));}}};</script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
-  {% endif %}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -24,7 +20,7 @@
     </div>
     <nav class="site-nav wrap" aria-label="Main navigation">
       {% for item in site.data.navigation %}
-      <a href="{{ item.url | relative_url }}"{% if page.url == item.url or item.url == '/teaching/' and page.collection == 'lessons' %} aria-current="page"{% endif %}>{{ item.title }}</a>
+      <a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>
       {% endfor %}
     </nav>
   </header>

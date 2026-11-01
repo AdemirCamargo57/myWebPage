@@ -9,7 +9,7 @@ site=root/'_site'
 if not site.exists():raise SystemExit('Build the site before running validation.')
 class Page(HTMLParser):
     def __init__(self,text):
-        super().__init__();self.ids=set();self.duplicates=[];self.links=[];self.images=[];self.h1=0;self.feed(text)
+        super().__init__();self.ids=set();self.duplicates=[];self.links=[];self.images=[];self.pdf_links=[];self.h1=0;self.feed(text)
     def handle_starttag(self,tag,attrs):
         a=dict(attrs)
         if 'id' in a:
@@ -17,6 +17,7 @@ class Page(HTMLParser):
             self.ids.add(a['id'])
         if tag=='h1':self.h1+=1
         if tag=='a' and a.get('href'):self.links.append(a['href'])
+        if tag=='a' and urlsplit(a.get('href','')).path.lower().endswith('.pdf'):self.pdf_links.append(a)
         if tag=='img':self.images.append(a)
         if tag in ['script','link'] and (a.get('src') or a.get('href')):self.links.append(a.get('src') or a.get('href'))
 pages={p:Page(p.read_text(encoding='utf-8')) for p in site.rglob('*.html')}
@@ -49,7 +50,20 @@ if len({r['id'] for r in rows})!=len(rows):errors.append('Duplicate publication 
 for row in rows:
     if not (site/row['bib_path'].lstrip('/')).is_file():errors.append('Missing BibTeX for '+row['id'])
     if not row['authors']:errors.append('Missing authors for '+row['id'])
-report={'pages':len(pages),'lessons':len(list((root/'_lessons').glob('*'))),'publications':len(rows),'errors':errors}
+teaching=pages.get((site/'teaching/index.html').resolve())
+if teaching is None:errors.append('Missing Teaching Materials page')
+pdf_links=teaching.pdf_links if teaching else []
+for link in pdf_links:
+    if link.get('target')!='_blank':errors.append('Teaching PDF must open in a new tab: '+link['href'])
+    if 'noopener' not in link.get('rel','').split():errors.append('Teaching PDF is missing noopener: '+link['href'])
+pdfs=list((root/'assets/teaching').glob('*.pdf'))
+for pdf in pdfs:
+    if not pdf.read_bytes().startswith(b'%PDF-'):errors.append('Invalid PDF file: '+pdf.name)
+    published=site/'assets/teaching'/pdf.name
+    if not published.exists() or published.read_bytes()!=pdf.read_bytes():errors.append('Published PDF differs from source: '+pdf.name)
+if list((root/'_lessons').glob('*.md')) or list((root/'_lessons').glob('*.html')):errors.append('Obsolete lesson sources remain')
+if any(p != (site/'teaching/index.html') for p in (site/'teaching').rglob('*.html')):errors.append('Obsolete HTML lesson pages remain in the build')
+report={'pages':len(pages),'teaching_pdfs':len(pdf_links),'publications':len(rows),'errors':errors}
 (root/'working').mkdir(exist_ok=True)
 (root/'working/validation.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
 print(json.dumps(report,indent=2))

@@ -1,17 +1,3 @@
-document.querySelectorAll('[data-print]').forEach(button => button.addEventListener('click', () => window.print()));
-const article = document.querySelector('[data-lesson]');
-const toc = document.querySelector('[data-toc]');
-if (article && toc) {
-  article.querySelectorAll('h2,h3').forEach((heading, i) => {
-    if (!heading.id) heading.id = `section-${i + 1}`;
-    const item = document.createElement('li');
-    const link = document.createElement('a');
-    link.href = `#${heading.id}`;
-    link.textContent = heading.textContent;
-    item.append(link); toc.append(item);
-  });
-  if (!toc.children.length) document.querySelector('.lesson-toc').hidden = true;
-}
 const search = document.querySelector('#publication-search');
 if (search) {
   const year = document.querySelector('#publication-year');

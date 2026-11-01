@@ -1,12 +1,12 @@
 # Content migration and review status
 
-Updated: October 31, 2026.
+Updated: November 1, 2026.
 
 ## Website
 
-Implemented: all seven agreed sections, responsive layouts, publication search and filters, downloadable BibTeX, separate teaching pages, MathJax, lesson contents navigation, print styles, GitHub Pages deployment workflow, and maintenance instructions.
+Implemented: all seven agreed sections, responsive layouts, publication search and filters, downloadable BibTeX, a weekly PDF teaching catalog, print styles, GitHub Pages deployment workflow, and maintenance instructions.
 
-The site has not been pushed to GitHub or published. No domain or DNS changes have been made. The website repository name remains your choice; the workflow derives its deployed base path from GitHub Pages.
+The site is published at https://ademircamargo57.github.io/myWebPage/. This PDF catalog update is local until committed and pushed to the repository. No domain or DNS changes are part of this update.
 
 ## Biography
 
@@ -22,59 +22,31 @@ Five name-match records in ORCID are excluded **as confirmed by the author**: Pe
 
 This is a complete reconciliation of the **journal-article list supplied**, not a claim that all lifetime conference presentations, books, chapters, or other outputs have been recovered. The CV's summary mentions additional output categories without full itemized records in this export. Add those if a complete all-output bibliography is desired.
 
-## Completed teaching pages
+## Teaching Materials — PDF catalog
 
-These are English web editions rewritten from the Site handouts, with mathematical corrections noted below. They preserve the principal derivations, examples, and exercises, but are edited teaching editions rather than line-for-line documentary translations. Hand-drawn or redundant source illustrations have been replaced by mathematical explanations where appropriate.
+The teaching section now publishes author-supplied PDFs. All 13 former Markdown and HTML lesson sources and their dedicated lesson layout were removed. Main site pages and unrelated biography, research, contact, publication, and navigation behavior are preserved. The lesson collection, lesson-only JavaScript, and external MathJax loader are no longer used.
 
-| Source | Web edition |
-| --- | --- |
-| `Site/grupo.docx` | Groups and Abelian Groups |
-| `Site/grupo_corpo_espaco_vetorial_norma.docx` | Fields, Vector Spaces, Inner Products, and Norms |
-| `Site/Espaco_Hilbert.docx` | Hilbert Spaces |
-| `Site/Operador_linear.docx` | Linear Operators and Matrix Representations |
-| `Site/Metodo_diferencas_finitas.docx` | The Finite Difference Method |
-| `Site/CÁLCULO VARIACIONAL.docx` | Variational Calculus |
-| `Site/funcoes_base.docx` | Basis Functions in Quantum Chemistry |
-| `Site/calculo_numerico_focas.docx` | Numerical Calculation of Atomic Forces |
-| `Site/verlet_velocity_verlet_leap_frog.docx` | Verlet, Velocity Verlet, and Leapfrog Integration |
-| `01_MDEE_Chapters/CAP-II_v10.docx` | Postulates of Quantum Mechanics |
-| `01_MDEE_Chapters/CAP-VI_v2.docx` | Reduced Density Gradient and Noncovalent Interactions; Hole–Electron Analysis and Transition Properties; Natural Transition Orbitals |
+The public page remains at `/teaching/`, with the navigation label **Teaching Materials**. Entries are sorted by numeric week in ascending order. Each entry displays its week, publication date, title, optional page count, and a short description. PDF links explicitly indicate that they open in a new tab and use `target="_blank"` with `rel="noopener noreferrer"`.
 
-Chapter VI already contains English sections. Those were converted with their equations and all four embedded PNG figures. The repeated Portuguese hole–electron section was omitted because the same material appears in English. Source title and cover/contents boilerplate were removed. A long inline RMSD equation was changed to display format to prevent mobile overflow.
+### First material
 
-## Textbook chapters still requiring translation and scientific review
+- Week: 01
+- Date: November 1, 2026
+- Title: Calculus of Variations
+- File: `assets/teaching/CAP_I_A_EN.pdf`
+- Length: 18 pages
+- Description: variational methods, the Euler–Lagrange equations, Fermat's principle and least action, conservation laws, multiple dependent variables, and holonomic constraints.
 
-The complete textbook migration is **not finished**. These sources have been inventoried and converted locally as preparation, but are not published as finished English lessons:
+The PDF supplied in `_lessons/CAP_I_A_EN.pdf` was moved intact to `assets/teaching/CAP_I_A_EN.pdf`; its contents were not edited. Its title, contents, and length were read to prepare the catalog entry. The original curriculum PDF remains excluded from Git and the published website.
 
-- `01_MDEE_Chapters/CAP-I_v12.docx`: mathematical review.
-- `01_MDEE_Chapters/CAP-III_v11.docx`: advanced molecular dynamics.
-- `01_MDEE_Chapters/CAP-IV_v12.docx`: electronic structure methods.
-- `01_MDEE_Chapters/CAP-V_v13.docx`: molecular property calculations.
-- `02_QQ_Chapters/QQ_CAP-I_Rev1.docx` through `QQ_CAP-VII_Rev1.docx`: quantum chemistry textbook collection. **The file labeled chapter VI contains approximately the entire compiled textbook**, so it must be separated and checked against the other chapter files before translation to avoid repeating the book as one chapter.
+### Weekly updates
 
-The root-level compiled textbooks, older chapter revisions, and source PDFs have not been duplicated as separate lessons. Supplementary drafts, including XC_ChatGPT and Veritasium, are excluded as instructed.
+Upload each new PDF to `assets/teaching/` and add one entry to `_data/teaching_materials.yml`. The catalog and homepage teaching links update automatically during the Jekyll build. See the weekly PDF instructions in `README.md`. There is no need to create a lesson page, edit navigation, or convert the PDF to HTML.
 
-Source conversions and extracted text are kept under `working/`, which is excluded from Git and the built website. Never treat the conversion outputs as verified translations. Equations inside tables need checking as well as equations in ordinary paragraphs.
-
-## Scientific editorial changes for author review
-
-- **Groups:** subtraction on the real numbers is not a group operation; retained the example as a counterexample. Commutativity is presented as the additional condition for an abelian group.
-- **Vector spaces:** linear independence means the coefficient equation has only the trivial coefficient solution. Corrected malformed coordinate examples and distinguished a dual bra from its ket representation.
-- **Hilbert spaces:** separability is not required by the general definition. The Cauchy condition involves every pair of sufficiently late terms, not only consecutive terms. Square-integrability statements are qualified by the function domain.
-- **Operators:** taking the adjoint of `O|a⟩=|b⟩` produces `⟨a|O†=⟨b|`. Eigenvectors for distinct Hermitian eigenvalues are orthogonal; degeneracy requires a separate choice of basis. Boundary conditions and domains qualify differential-operator statements. The Pauli y matrix follows the standard sign convention.
-- **Finite differences:** forward/backward first derivatives have first-order errors; central first and second derivatives have second-order errors. Corrected Taylor factorial indices, powers, and the distinction between a numerator remainder and the derivative's error.
-- **Forces:** finite differences are applied to individual Cartesian coordinates. The full potential energy depends on all coordinates, not on an isolated atom's energy. Corrected the Taylor second-order coefficient.
-- **Verlet:** distinguished local Taylor remainders from second-order global accuracy. Corrected the force-gradient signs. Clarified velocity-dependent forces, half-step velocities, and kinetic-temperature degrees of freedom.
-- **Basis sets:** distinguished molecular orbitals from many-electron wavefunctions, primitives from contractions, and five spherical versus six Cartesian d functions. Corrected carbon counts: 6-311G has 13 contracted functions; 6-31+G(d) has 19 with six Cartesian d functions and 18 with five spherical d functions.
-- **Variational calculus:** zero integral does not by itself imply zero integrand; the fundamental lemma requires arbitrary admissible variations. Stationarity does not establish a minimum. Pointwise constraints generally require multiplier functions. Equal numbers of equations and unknowns do not guarantee a unique solution. Distinguished the directional derivative from the functional derivative.
-- **Quantum postulates:** the Dirac delta is a distribution; continuum eigenkets are generalized states. Corrected Fourier normalization to include ħ. Symmetric operator ordering and Poisson-bracket correspondence are qualified rather than asserted as universal quantization theorems. Ehrenfest's classical correspondence is qualified for nonlinear potentials.
-
-These notes are intended to make the mathematical editing reviewable. The English editions should receive the author's scientific review before being used as official course texts.
+Old lesson URLs no longer publish content. The current catalog remains at the existing `/teaching/` address. No replacement PDF is invented for a removed lesson.
 
 ## Verification
 
-- Real Jekyll 4.4.1 static build completed locally.
-- Local link, image, fragment, heading, and bibliography checks passed for 21 HTML pages, 13 lessons, and 102 publication records.
-- All 13 lessons checked in the browser at a 390-pixel mobile width; MathJax reports no formula-rendering errors after corrections. No page-level horizontal overflow remained in these checks; long display equations can scroll within their own region.
-- Desktop homepage and lesson layouts inspected visually; mobile homepage inspected visually. Publication keyword search and combined year filtering verified. Remaining changes should be checked again after publication.
-- The first standard GitHub Actions build and deployment remain to be run in the selected repository. The portable local check bypasses optional Windows live-reload extensions, not the Jekyll template or Markdown renderer.
+Build and verification results for this update are recorded locally in `working/validation.json`. Checks cover the main HTML pages, local links and fragments, PDF new-tab attributes, matching source/build PDF bytes, bibliography files, and removal of generated HTML lesson pages. The existing deployment workflow remains unchanged.
+
+The catalog PDF was opened by clicking its link in the browser: it loaded in a separate tab while the catalog stayed open. The built-in viewer showed 18 pages. The catalog had no page-level horizontal overflow in the observed narrow preview, and publication search returned 8 of 102 records for “solvation.”

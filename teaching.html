@@ -1,16 +1,25 @@
 ---
-title: Teaching
+title: Teaching Materials
 permalink: /teaching/
 ---
-<div class="page-heading"><span class="eyebrow">Teaching at UEG</span><h1>Teaching materials</h1><p class="deck">Notes, derivations, and practical methods for students of physical and computational chemistry.</p><p>Choose a topic to read online. Each lesson includes mathematical notation and a print layout for saving a personal PDF.</p></div>
-{% assign subjects = 'Mathematical foundations|Quantum chemistry|Molecular dynamics' | split: '|' %}
-<div class="page-body">
-{% for subject in subjects %}
-<section class="subject" id="{{ subject | slugify }}"><h2>{{ subject }}</h2>
-<ul class="resource-list">
-{% assign lessons = site.lessons | where: 'subject', subject | sort: 'order' %}
-{% for lesson in lessons %}<li><h3><a href="{{ lesson.url | relative_url }}">{{ lesson.title }}</a></h3><p>{{ lesson.description }}</p></li>{% endfor %}
-</ul>
-</section>
-{% endfor %}
+<div class="page-heading">
+  <span class="eyebrow">Teaching at UEG</span>
+  <h1>Teaching Materials</h1>
+  <p class="deck">Weekly reading and course notes for students of physical and computational chemistry.</p>
+  <p>Materials are listed in week order. Each PDF opens in a new tab so you can keep this page open while you read or save a copy.</p>
 </div>
+{% assign materials = site.data.teaching_materials | sort: 'week' %}
+<section class="page-body" aria-labelledby="weekly-materials">
+  <h2 id="weekly-materials">Weekly materials</h2>
+  <ol class="resource-list teaching-materials">
+    {% for material in materials %}
+    <li>
+      <p class="material-meta"><span class="eyebrow">Week {% if material.week < 10 %}0{% endif %}{{ material.week }}</span> <span aria-hidden="true">·</span> Posted <time datetime="{{ material.date | date: '%Y-%m-%d' }}">{{ material.date | date: '%B %-d, %Y' }}</time></p>
+      <h3><a href="{{ material.pdf | relative_url }}" target="_blank" rel="noopener noreferrer">{{ material.title | escape }} <span class="material-format">(PDF{% if material.pages %}, {{ material.pages }} pages{% endif %}; opens in a new tab)</span></a></h3>
+      <p class="material-description">{{ material.description | escape }}</p>
+    </li>
+    {% else %}
+    <li><p>Teaching materials will be listed here as they become available.</p></li>
+    {% endfor %}
+  </ol>
+</section>

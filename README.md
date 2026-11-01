@@ -1,12 +1,12 @@
 # Ademir Camargo — academic website
 
-A lightweight Jekyll website for GitHub Pages. The interface and available teaching lessons use American English. Original publication titles are retained for accurate citation.
+A lightweight Jekyll website for GitHub Pages. The interface and teaching materials use American English. Original publication titles are retained for accurate citation.
 
 ## Current content
 
-The site includes Home, About, Research, Publications, Teaching, Research Group, and Contact pages; 98 journal articles reconciled against the supplied Lattes CV; three separately labeled preprints; one undated conference contribution; and 13 English teaching pages.
+The site includes Home, About, Research, Publications, Teaching Materials, Research Group, and Contact pages; 98 journal articles reconciled against the supplied Lattes CV; three separately labeled preprints; one undated conference contribution; and a weekly PDF catalog.
 
-**The full textbook migration is not finished.** Read `CONTENT_STATUS.md` for the source inventory, completed lessons, remaining chapters, and editorial corrections. The group page describes confirmed research areas; it does not invent a current membership list.
+Teaching materials are now published as PDFs supplied by the author. The former Markdown and HTML lessons have been removed. Read `CONTENT_STATUS.md` for the current content status. The group page describes confirmed research areas; it does not invent a current membership list.
 
 ## Publish on GitHub Pages
 
@@ -34,40 +34,35 @@ Open a file in GitHub, select the pencil icon, make your changes, and commit to 
 | Contact details | `contact.md` |
 | Navigation | `_data/navigation.yml` |
 | Publications | `_data/publications.json` |
-| Teaching lessons | `_lessons/` |
+| Teaching Materials page | `teaching.html` |
+| Weekly titles, dates, descriptions, and PDF links | `_data/teaching_materials.yml` |
+| Teaching PDF files | `assets/teaching/` |
 | Colors, typography, and responsive layouts | `assets/site.css` |
 | Site address and page defaults | `_config.yml` |
 
-## Add a teaching lesson
+## Add a weekly teaching PDF
 
-Create `_lessons/descriptive-topic-name.md`. Start with this metadata, then write the lesson in Markdown:
+1. Upload the new PDF to `assets/teaching/`. Use a filename without spaces, for example `CAP_I_B_EN.pdf`.
+2. Open `_data/teaching_materials.yml` and append an entry following this example:
 
 ```yaml
----
-title: A Descriptive Lesson Title
-subject: Quantum chemistry
-order: 30
-description: A short explanation of what the reader will learn.
----
+- week: 2
+  title: Your next material title
+  date: 2026-11-08
+  pdf: /assets/teaching/CAP_I_B_EN.pdf
+  pages: 20
+  description: >-
+    Write one or two sentences explaining the topic, the main concepts covered,
+    and what students will learn from the material.
 ```
 
-Use one of the existing subject names exactly: `Mathematical foundations`, `Quantum chemistry`, or `Molecular dynamics`. Lessons appear automatically on the teaching index, sorted by `order`. A lesson named `descriptive-topic-name.md` appears at `/teaching/descriptive-topic-name/`.
+Replace the example title, date, filename, page count, and description with the actual details. The `pages` field is optional. Use increasing, unique integer week numbers (`1`, `2`, `3`, and so on) and an ISO date (`YYYY-MM-DD`). Paths and filenames are case sensitive on GitHub Pages.
 
-Use `##` for main sections and `###` for subsections. The lesson navigation is generated from these headings. The page title comes from the metadata; do not repeat it as a `#` heading.
+3. Commit the PDF and catalog change together. The existing GitHub Actions workflow publishes the update.
 
-Kramdown uses **double dollar signs** for both inline and display math:
+The catalog sorts by week number, earliest first, regardless of the entries' order in the file. Week labels, dates, titles, descriptions, and PDF links are generated automatically. Every catalog PDF opens in a new browser tab, and the homepage points to the current catalog. There are no lesson pages to generate, no page HTML to edit each week, and no external math-rendering dependency. The first entry is **Week 01 — Calculus of Variations**, published November 1, 2026, using `CAP_I_A_EN.pdf` (18 pages).
 
-```text
-The energy is $$E=mc^2$$.
-
-$$
-F_{\alpha x}=-\frac{\partial E}{\partial x_\alpha}.
-$$
-```
-
-Keep display delimiters on their own lines, separated from surrounding paragraphs by blank lines. Kramdown protects TeX from Markdown processing and produces MathJax delimiters in the generated HTML. Avoid ordinary single-dollar inline notation and raw `\(...\)` in Markdown source. In `.html` lessons, use `\(...\)` and `\[...\]` directly.
-
-Put figures in `assets/lessons/`, use descriptive alternative text, and build their URLs with Jekyll's `relative_url` filter. Keep equations as text rather than screenshots. Students can use **Print / Save as PDF** on any lesson page. Printing requires no account or server-side conversion.
+Keep `/teaching/` as the page address so existing navigation links continue to work. PDFs now belong in `assets/teaching/`, not `_lessons/`.
 
 ## Add a publication
 
@@ -104,10 +99,10 @@ When the domain is chosen, configure it under **Settings → Pages → Custom do
 
 ## Design and accessibility
 
-The site uses system fonts and Georgia, semantic landmarks, keyboard focus styles, a skip link, responsive navigation, readable contrast, and print layouts. Publication search runs entirely in the browser; the full list remains readable without JavaScript. Lesson contents navigation and the print button are enhancements; the lesson text remains available without them.
+The site uses system fonts and Georgia, semantic landmarks, keyboard focus styles, a skip link, responsive navigation, readable contrast, and print layouts. Publication search runs entirely in the browser; the full list remains readable without JavaScript. Teaching PDF links work without JavaScript and include an explicit notice that they open in a new tab.
 
-MathJax 3.2.2 is pinned and loaded only on lesson pages from jsDelivr. Readers need internet access to render equations; if the CDN is unavailable, the underlying TeX remains in the HTML. For fully offline equation rendering, vendor MathJax and its fonts and update the script path.
+PDFs contain their own equations, figures, and formatting. Readers can use their browser’s PDF viewer to read, print, or save a document.
 
 ## Verification and deployment status
 
-The site was built locally using Jekyll 4.4.1. Local static builds used the real Jekyll renderer with its dependencies loaded directly, avoiding optional Windows live-reload extensions. The normal Bundler workflow still needs its first successful GitHub Actions run. Browser checks cover the homepage, publication filters, and representative lessons at desktop and mobile widths. See `CONTENT_STATUS.md` for remaining content work. No repository, public deployment, or DNS configuration has been changed by this work.
+The site was built locally using Jekyll 4.4.1. Local static builds used the real Jekyll renderer with its dependencies loaded directly, avoiding optional Windows live-reload extensions. The PDF update is checked through a Jekyll build, local link and PDF checks, and browser layout review. The public site is hosted at `https://ademircamargo57.github.io/myWebPage/`; local changes reach it after you commit and push to `main`.

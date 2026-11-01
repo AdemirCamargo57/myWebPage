@@ -8,21 +8,11 @@ kramdown:
   input: GFM
   math_engine: mathjax
 permalink: pretty
-collections:
-  lessons:
-    output: true
-    permalink: /teaching/:name/
 defaults:
   - scope:
       path: ""
     values:
       layout: default
-  - scope:
-      path: ""
-      type: lessons
-    values:
-      layout: lesson
-      math: true
 exclude:
   - tools
   - working
