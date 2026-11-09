@@ -9,3 +9,39 @@
     An introduction to variational methods, from the Euler–Lagrange equations
     and the principles of Fermat and least action to conservation of energy
     and momentum, multiple dependent variables, and holonomic constraints.
+- week: 2
+  title: Functionals
+  date: 2026-11-09
+  pdf: /assets/teaching/CAP_I_B_EN.pdf
+  pages: 28
+  description: >-
+    An introduction to functionals and functional derivatives, including
+    variational notation, differentiation rules, and the Dirac delta function,
+    with applications to kinetic- and potential-energy functionals in density functional theory.
+- week: 3
+  title: Lagrange Multipliers
+  date: 2026-11-09
+  pdf: /assets/teaching/CAP_I_C_EN.pdf
+  pages: 5
+  description: >-
+    Constrained optimization using Lagrange multipliers, with a geometric
+    interpretation and worked examples. Extends the method to functionals
+    subject to integral constraints and the modified Euler–Lagrange equation.
+- week: 4
+  title: Finite Difference Method
+  date: 2026-11-09
+  pdf: /assets/teaching/CAP_I_D_EN.pdf
+  pages: 3
+  description: >-
+    Derivation of forward, backward, and central finite difference formulas
+    from Taylor expansions, including higher-order derivatives, truncation
+    errors, and exercises comparing numerical and exact derivatives.
+- week: 5
+  title: The Verlet Algorithm
+  date: 2026-11-09
+  pdf: /assets/teaching/CAP_I_E_EN.pdf
+  pages: 7
+  description: >-
+    Numerical integration of atomic motion using the Verlet, velocity Verlet,
+    and leapfrog algorithms. Covers time-step selection, error behavior,
+    and numerical evaluation of forces for molecular dynamics simulations.

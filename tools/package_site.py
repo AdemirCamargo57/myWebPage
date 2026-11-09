@@ -3,7 +3,7 @@ from pathlib import Path
 from zipfile import ZipFile,ZIP_DEFLATED
 root=Path(__file__).resolve().parents[1]
 out=root/'output';out.mkdir(exist_ok=True)
-source_names=['_config.yml','.gitignore','Gemfile','README.md','CONTENT_STATUS.md','index.html','404.html','about.md','contact.md','group.md','research.md','publications.html','teaching.html']
+source_names=['_config.yml','.gitignore','Gemfile','README.md','CONTENT_STATUS.md','AGENTS.md','index.html','404.html','about.md','contact.md','group.md','research.md','publications.html','teaching.html']
 source_files=[root/n for n in source_names]
 for folder in ['_data','_layouts','.github','assets']:
     source_files.extend(p for p in (root/folder).rglob('*') if p.is_file())

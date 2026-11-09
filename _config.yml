@@ -14,6 +14,7 @@ defaults:
     values:
       layout: default
 exclude:
+  - AGENTS.md
   - tools
   - working
   - README.md
