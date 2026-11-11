@@ -45,3 +45,21 @@
     Numerical integration of atomic motion using the Verlet, velocity Verlet,
     and leapfrog algorithms. Covers time-step selection, error behavior,
     and numerical evaluation of forces for molecular dynamics simulations.
+- week: 6
+  title: Vector Spaces
+  date: 2026-11-11
+  pdf: /assets/teaching/CAP_I_F_EN.pdf
+  pages: 20
+  description: >-
+    Introduces groups, fields, vector spaces, inner products, norms, and Hilbert
+    spaces. Uses Dirac notation to explain linear operators, Hermitian adjoints,
+    changes of basis, eigenvalues, and eigenvectors.
+- week: 7
+  title: Natural Transition Orbitals (NTOs)
+  date: 2026-11-11
+  pdf: /assets/teaching/CAP_VI_C_EN.pdf
+  pages: 18
+  description: >-
+    Worked examples show how to assemble a transition matrix from excitation
+    amplitudes and use singular value decomposition to obtain hole–electron
+    orbital pairs for interpreting electronic excitations.

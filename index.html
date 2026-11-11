@@ -21,7 +21,7 @@ title: Home
   <section>
     <span class="eyebrow">Teaching</span><h2>Notes for learning and practice</h2>
     <p>Weekly PDF materials with short introductions to help you find the reading you need. Open a document in a new tab to read it or save a copy.</p>
-    <ul class="resource-list">{% assign materials = site.data.teaching_materials | sort: 'week' %}{% for material in materials limit:3 %}<li><h3><a href="{{ '/teaching/#weekly-materials' | relative_url }}">{{ material.title | escape }}</a></h3><p>Week {% if material.week < 10 %}0{% endif %}{{ material.week }} · PDF{% if material.pages %} · {{ material.pages }} pages{% endif %}</p></li>{% endfor %}</ul>
+    <ul class="resource-list">{% assign materials = site.data.teaching_materials | sort: 'week' %}{% for material in materials limit:3 %}<li><h3><a href="{{ '/teaching/#weekly-materials' | relative_url }}">{{ material.title | escape }}</a></h3><p>PDF{% if material.pages %} · {{ material.pages }} pages{% endif %}</p></li>{% endfor %}</ul>
     <a href="{{ '/teaching/' | relative_url }}">View all teaching materials →</a>
   </section>
 </div>

@@ -6,7 +6,7 @@ permalink: /teaching/
   <span class="eyebrow">Teaching at UEG</span>
   <h1>Teaching Materials</h1>
   <p class="deck">Weekly reading and course notes for students of physical and computational chemistry.</p>
-  <p>Materials are listed in week order. Each PDF opens in a new tab so you can keep this page open while you read or save a copy.</p>
+  <p>Each PDF opens in a new tab so you can keep this page open while you read or save a copy.</p>
 </div>
 {% assign materials = site.data.teaching_materials | sort: 'week' %}
 <section class="page-body" aria-labelledby="weekly-materials">
@@ -14,7 +14,7 @@ permalink: /teaching/
   <ol class="resource-list teaching-materials">
     {% for material in materials %}
     <li>
-      <p class="material-meta"><span class="eyebrow">Week {% if material.week < 10 %}0{% endif %}{{ material.week }}</span> <span aria-hidden="true">·</span> Posted <time datetime="{{ material.date | date: '%Y-%m-%d' }}">{{ material.date | date: '%B %-d, %Y' }}</time></p>
+      <p class="material-meta">Posted <time datetime="{{ material.date | date: '%Y-%m-%d' }}">{{ material.date | date: '%B %-d, %Y' }}</time></p>
       <h3><a href="{{ material.pdf | relative_url }}" target="_blank" rel="noopener noreferrer">{{ material.title | escape }} <span class="material-format">(PDF{% if material.pages %}, {{ material.pages }} pages{% endif %}; opens in a new tab)</span></a></h3>
       <p class="material-description">{{ material.description | escape }}</p>
     </li>

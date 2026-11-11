@@ -26,11 +26,10 @@ This is a complete reconciliation of the **journal-article list supplied**, not 
 
 The teaching section now publishes author-supplied PDFs. All 13 former Markdown and HTML lesson sources and their dedicated lesson layout were removed. Main site pages and unrelated biography, research, contact, publication, and navigation behavior are preserved. The lesson collection, lesson-only JavaScript, and external MathJax loader are no longer used.
 
-The public page remains at `/teaching/`, with the navigation label **Teaching Materials**. Entries are sorted by numeric week in ascending order. Each entry displays its week, publication date, title, optional page count, and a short description. PDF links explicitly indicate that they open in a new tab and use `target="_blank"` with `rel="noopener noreferrer"`.
+The public page remains at `/teaching/`, with the navigation label **Teaching Materials**. Entries are sorted by numeric week in ascending order. Each entry displays its publication date, title, optional page count, and a short description. PDF links explicitly indicate that they open in a new tab and use `target="_blank"` with `rel="noopener noreferrer"`.
 
 ### First material
 
-- Week: 01
 - Date: November 1, 2026
 - Title: Calculus of Variations
 - File: `assets/teaching/CAP_I_A_EN.pdf`

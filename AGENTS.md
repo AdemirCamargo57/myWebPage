@@ -107,7 +107,7 @@ Reuse the variables in `assets/site.css` rather than introducing near-duplicates
   `_data/teaching_materials.yml`. Use unique increasing integer weeks, an ISO posting
   date, the exact PDF path, the document title, a verified optional page count, and
   a short description based on the document. Preserve supplied PDF bytes.
-- The teaching catalog sorts weeks ascending and displays two-digit week labels,
+- The teaching catalog sorts by the internal week number and displays
   a posting date, title, page count, and description. Reuse `.resource-list` and
   `.teaching-materials`. Every PDF link opens in a new tab with
   `target="_blank"`, `rel="noopener noreferrer"`, and a visible new-tab notice.

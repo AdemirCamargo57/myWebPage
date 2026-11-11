@@ -60,7 +60,7 @@ Replace the example title, date, filename, page count, and description with the 
 
 3. Commit the PDF and catalog change together. The existing GitHub Actions workflow publishes the update.
 
-The catalog sorts by week number, earliest first, regardless of the entries' order in the file. Week labels, dates, titles, descriptions, and PDF links are generated automatically. Every catalog PDF opens in a new browser tab, and the homepage points to the current catalog. There are no lesson pages to generate, no page HTML to edit each week, and no external math-rendering dependency. The first entry is **Week 01 — Calculus of Variations**, published November 1, 2026, using `CAP_I_A_EN.pdf` (18 pages).
+The catalog uses the week number to sort entries, earliest first. Dates, titles, descriptions, and PDF links are generated automatically. Every catalog PDF opens in a new browser tab, and the homepage points to the current catalog. There are no lesson pages to generate, no page HTML to edit each week, and no external math-rendering dependency. The first entry is **Calculus of Variations**, published November 1, 2026, using `CAP_I_A_EN.pdf` (18 pages).
 
 Keep `/teaching/` as the page address so existing navigation links continue to work. PDFs now belong in `assets/teaching/`, not `_lessons/`.
 
